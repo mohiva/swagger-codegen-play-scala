@@ -1,0 +1,56 @@
+package {{package}}
+
+import javax.inject.Inject
+
+{{#imports}}
+import {{import}}
+{{/imports}}
+import {{invokerPackage}}._
+import {{invokerPackage}}.ApiJsonFormats._
+
+import scala.concurrent.{ Future, ExecutionContext }
+import scala.language.reflectiveCalls
+
+{{#operations}}
+class {{classname}} @Inject() (apiInvoker: ApiInvoker) {
+
+{{#operation}}
+{{#javadocRenderer}}
+{{>javadoc}}
+{{/javadocRenderer}}
+  def {{operationId}}({{>methodParameters}}): Future[ApiResponse[{{>operationReturnType}}]] = {
+
+    apiInvoker.execute[{{>operationReturnType}}](ApiRequest(ApiRequest.RequestMethod.{{httpMethod.toUpperCase}}, "{{basePath}}", "{{path}}", {{#consumes.0}}Some("{{mediaType}}"){{/consumes.0}}{{^consumes}}None{{/consumes}}, rc)
+      {{#authMethods}}{{#isApiKey}}.withCredentials(ApiRequest.ApiKeyCredentials(apiKey, "{{keyParamName}}", {{#isKeyInQuery}}ApiRequest.ApiKeyLocations.QUERY{{/isKeyInQuery}}{{#isKeyInHeader}}ApiRequest.ApiKeyLocations.HEADER{{/isKeyInHeader}}))
+      {{/isApiKey}}{{#isBasic}}.withCredentials(basicAuth)
+      {{/isBasic}}{{/authMethods}}{{#bodyParam}}.{{#isPrimitiveType}}withPrimitiveBody{{/isPrimitiveType}}{{^isPrimitiveType}}withJsonBody[{{>bodyType}}]{{/isPrimitiveType}}({{paramName}})
+      {{/bodyParam}}{{#formParams}}.withFormParam({{>paramCreation}})
+      {{/formParams}}{{#queryParams}}.withQueryParam({{>paramCreation}})
+      {{/queryParams}}{{#pathParams}}.withPathParam({{>paramCreation}})
+      {{/pathParams}}{{#headerParams}}.withHeaderParam({{>paramCreation}})
+      {{/headerParams}}{{#responses}}{{^isWildcard}}{{#dataType}}.with{{#isPrimitiveType}}Primitive{{/isPrimitiveType}}{{^isPrimitiveType}}Json{{/isPrimitiveType}}{{>responseState}}Response[{{dataType}}]({{code}})
+      {{/dataType}}{{^dataType}}.withPrimitive{{>responseState}}Response[Unit]({{code}})
+      {{/dataType}}{{/isWildcard}}{{/responses}}{{#responses}}{{#isWildcard}}{{#dataType}}.withDefault{{#isPrimitiveType}}Primitive{{/isPrimitiveType}}{{^isPrimitiveType}}Json{{/isPrimitiveType}}{{>responseState}}Response[{{dataType}}]
+      {{/dataType}}{{^dataType}}.withDefaultPrimitive{{>responseState}}Response[Unit]{{/dataType}}{{/isWildcard}}{{/responses}}
+    )
+  }
+{{/operation}}
+}
+
+/**
+ * The companion object.
+ */
+object {{classname}} {
+{{#operation}}
+{{^responseHeaders.isEmpty}}
+
+  /**
+   * Helper to extract headers for the `{{operationId}}` method.
+   */
+  case class {{#fnCapitalize}}{{operationId}}{{/fnCapitalize}}Headers(r: {def headers: Map[String, Seq[String]]}) { {{#responseHeaders}}
+    def {{name}}(index: Int = 0) = ApiHeaderExtractor(r.headers).as{{^isContainer}}{{baseType}}{{/isContainer}}{{#isContainer}}String{{/isContainer}}("{{baseName}}", index){{/responseHeaders}}
+  }
+{{/responseHeaders.isEmpty}}
+{{/operation}}
+}
+{{/operations}}

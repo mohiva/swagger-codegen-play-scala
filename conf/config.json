@@ -1,0 +1,11 @@
+{
+  "modelPackage": "com.mohiva.swagger.codegen.models",
+  "apiPackage": "com.mohiva.swagger.codegen",
+  "invokerPackage": "com.mohiva.swagger.codegen.core",
+  "configKeyPath": "com.mohiva.swagger.client",
+  "projectOrganization": "com.mohiva",
+  "projectName": "api-client",
+  "projectVersion": "1.1.1",
+  "scalaVersion": "2.11.7",
+  "playVersion": "2.4.6"
+}

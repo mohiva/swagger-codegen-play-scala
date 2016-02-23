@@ -1,0 +1,34 @@
+package {{package}}
+
+import {{invokerPackage}}.ApiJsonFormats._
+import org.joda.time.DateTime
+import org.cvogt.play.json.Jsonx
+
+{{#models}}
+{{#model}}
+
+case class {{classname}} (
+  {{#vars}}{{#description}}/* {{{description}}} */
+  {{/description}}{{name}}: {{^required}}Option[{{/required}}{{^isEnum}}{{datatype}}{{/isEnum}}{{#isEnum}}{{classname}}.{{datatypeWithEnum}}{{/isEnum}}{{^required}}]{{/required}}{{#hasMore}},{{/hasMore}}{{^hasMore}}){{/hasMore}}
+  {{/vars}}
+
+/**
+ * The companion object.
+ */
+object {{classname}} {
+
+  /**
+   * Converts a [[{{classname}}]] class into a JSON object.
+   */
+  implicit val jsonFormat = Jsonx.formatCaseClass[{{classname}}]{{#hasEnums}}{{#vars}}{{#isEnum}}
+
+  /**
+   * The `{{datatypeWithEnum}}` enum.
+   */
+  type {{datatypeWithEnum}} = {{datatypeWithEnum}}.Value
+  object {{datatypeWithEnum}} extends Enumeration { {{#_enum}}
+    val {{#fnEnumEntry}}{{.}}{{/fnEnumEntry}} = Value("{{.}}"){{/_enum}}
+  }{{/isEnum}}{{/vars}}{{/hasEnums}}
+}
+{{/model}}
+{{/models}}

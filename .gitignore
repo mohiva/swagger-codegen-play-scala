@@ -1,0 +1,10 @@
+# Play
+project/project
+target
+
+# IDEA
+/.idea
+
+# Swagger
+build
+swagger-codegen-cli*.jar

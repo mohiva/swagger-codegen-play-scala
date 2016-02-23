@@ -1,0 +1,17 @@
+organization := "{{projectOrganization}}"
+
+name := "{{projectName}}"
+
+version := "{{projectVersion}}"
+
+scalaVersion := "{{scalaVersion}}"
+
+val playVersion = "{{playVersion}}"
+
+libraryDependencies ++= Seq(
+  "com.typesafe.play" %% "play-ws" % playVersion,
+  "com.typesafe.play" %% "play-json" % playVersion,
+  "org.cvogt" %% "play-json-extensions" % "0.6.0",
+  "javax.inject" % "javax.inject" % "1",
+  "joda-time" % "joda-time" % "2.8.1"
+)
