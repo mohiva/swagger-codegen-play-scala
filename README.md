@@ -31,7 +31,7 @@ sbt compile
 The code generator supports the following config options:
 
 Name                | Description
-----------------------------------------------------------------------------------
+--------------------|-------------------------------------------------------------
 modelPackage        | The package were the generated `model` classes should be located
 apiPackage          | The package were the generated `api` classes should be located
 invokerPackage      | The package were the generated `invoker` classes should be located
