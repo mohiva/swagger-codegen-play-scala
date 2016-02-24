@@ -268,13 +268,13 @@ object ApiRequest {
    * API key credentials.
    *
    * @param key      The API key.
-   * @param name     The name were the key should be transported in query string.
-   * @param location The location were the key should be transported.
+   * @param name     The name where the key should be transported in query string.
+   * @param location The location where the key should be transported.
    */
   sealed case class ApiKeyCredentials(key: ApiKey, name: String, location: ApiKeyLocation) extends Credentials
 
   /**
-   * The location were the API can be defined.
+   * The location where the API can be defined.
    */
   sealed trait ApiKeyLocation
   object ApiKeyLocations {

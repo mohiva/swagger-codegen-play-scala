@@ -32,9 +32,9 @@ The code generator supports the following config options:
 
 Name                | Description
 --------------------|-------------------------------------------------------------
-modelPackage        | The package were the generated `model` classes should be located
-apiPackage          | The package were the generated `api` classes should be located
-invokerPackage      | The package were the generated `invoker` classes should be located
+modelPackage        | The package for generated `model` classes
+apiPackage          | The package for generated `api` classes
+invokerPackage      | The package for generated `root` classes
 configKeyPath       | Path under which the config must be defined 
 projectOrganization | Project organization in generated build.sbt
 projectName         | Project name in generated build.sbt
