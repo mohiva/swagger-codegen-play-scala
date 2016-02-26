@@ -116,6 +116,7 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         importMapping.remove("Map");
 
         importMapping.put("DateTime", "org.joda.time.DateTime");
+        importMapping.put("File", "java.io.File");
 
         typeMapping = new HashMap<>();
         typeMapping.put("array", "Seq");
