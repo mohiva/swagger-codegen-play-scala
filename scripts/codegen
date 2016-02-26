@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-set -o errexit
+set -o nounset -o errexit
 source $(dirname $0)/functions
 
 PID=$$
@@ -60,5 +60,5 @@ then
     die "Please download the codegen cli"
 fi
 
-export JAVA_OPTS="${JAVA_OPTS} -Xmx1024M"
+export JAVA_OPTS="${JAVA_OPTS:-} -Xmx1024M"
 java -cp ${CLASS_PATH} ${JAVA_OPTS} io.swagger.codegen.Codegen generate -t ${TMP_DIR}/templates -l "${LANGUAGE}" $@
