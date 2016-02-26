@@ -147,7 +147,8 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
                 "Object",
                 "List",
                 "Seq",
-                "Map")
+                "Map",
+                "File")
         );
         instantiationTypes.put("array", "ListBuffer");
         instantiationTypes.put("map", "Map");
