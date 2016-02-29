@@ -23,14 +23,14 @@ class {{classname}} @Inject() (apiInvoker: ApiInvoker) {
     apiInvoker.execute[{{>operationReturnType}}](ApiRequest(ApiRequest.RequestMethod.{{httpMethod.toUpperCase}}, "{{basePath}}", "{{path}}", {{#consumes.0}}Some("{{mediaType}}"){{/consumes.0}}{{^consumes}}None{{/consumes}}, rc)
       {{#authMethods}}{{#isApiKey}}.withCredentials(ApiRequest.ApiKeyCredentials(apiKey, "{{keyParamName}}", {{#isKeyInQuery}}ApiRequest.ApiKeyLocations.QUERY{{/isKeyInQuery}}{{#isKeyInHeader}}ApiRequest.ApiKeyLocations.HEADER{{/isKeyInHeader}}))
       {{/isApiKey}}{{#isBasic}}.withCredentials(basicAuth)
-      {{/isBasic}}{{/authMethods}}{{#bodyParam}}.{{#isPrimitiveType}}withPrimitiveBody{{/isPrimitiveType}}{{^isPrimitiveType}}withJsonBody[{{>bodyType}}]{{/isPrimitiveType}}({{paramName}})
+      {{/isBasic}}{{/authMethods}}{{#bodyParam}}.{{#primitiveType}}withPrimitiveBody{{/primitiveType}}{{^primitiveType}}withJsonBody[{{>bodyType}}]{{/primitiveType}}({{paramName}})
       {{/bodyParam}}{{#formParams}}.withFormParam({{>paramCreation}})
       {{/formParams}}{{#queryParams}}.withQueryParam({{>paramCreation}})
       {{/queryParams}}{{#pathParams}}.withPathParam({{>paramCreation}})
       {{/pathParams}}{{#headerParams}}.withHeaderParam({{>paramCreation}})
-      {{/headerParams}}{{#responses}}{{^isWildcard}}{{#dataType}}.with{{#isPrimitiveType}}Primitive{{/isPrimitiveType}}{{^isPrimitiveType}}Json{{/isPrimitiveType}}{{>responseState}}Response[{{dataType}}]({{code}})
+      {{/headerParams}}{{#responses}}{{^isWildcard}}{{#dataType}}.with{{#primitiveType}}Primitive{{/primitiveType}}{{^primitiveType}}Json{{/primitiveType}}{{>responseState}}Response[{{dataType}}]({{code}})
       {{/dataType}}{{^dataType}}.withPrimitive{{>responseState}}Response[Unit]({{code}})
-      {{/dataType}}{{/isWildcard}}{{/responses}}{{#responses}}{{#isWildcard}}{{#dataType}}.withDefault{{#isPrimitiveType}}Primitive{{/isPrimitiveType}}{{^isPrimitiveType}}Json{{/isPrimitiveType}}{{>responseState}}Response[{{dataType}}]
+      {{/dataType}}{{/isWildcard}}{{/responses}}{{#responses}}{{#isWildcard}}{{#dataType}}.withDefault{{#primitiveType}}Primitive{{/primitiveType}}{{^primitiveType}}Json{{/primitiveType}}{{>responseState}}Response[{{dataType}}]
       {{/dataType}}{{^dataType}}.withDefaultPrimitive{{>responseState}}Response[Unit]{{/dataType}}{{/isWildcard}}{{/responses}}
     )
   }

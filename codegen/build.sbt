@@ -1,5 +1,6 @@
 libraryDependencies ++= Seq(
-  Dependencies.Library.swaggerCodegen
+  Dependencies.Library.swaggerCodegen,
+  Dependencies.Library.testNG % "test"
 )
 
 // Do not append Scala versions to the generated artifacts

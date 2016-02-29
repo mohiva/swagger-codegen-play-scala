@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import io.swagger.codegen.*;
+import io.swagger.models.Response;
 import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.properties.*;
 import org.apache.commons.lang.StringUtils;
@@ -116,7 +117,6 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         importMapping.remove("Map");
 
         importMapping.put("DateTime", "org.joda.time.DateTime");
-        importMapping.put("File", "java.io.File");
 
         typeMapping = new HashMap<>();
         typeMapping.put("array", "Seq");
@@ -148,8 +148,7 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
                 "Object",
                 "List",
                 "Seq",
-                "Map",
-                "File")
+                "Map")
         );
         instantiationTypes.put("array", "ListBuffer");
         instantiationTypes.put("map", "Map");
@@ -227,6 +226,24 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         supportingFiles.add(new SupportingFile("apiImplicits.mustache", invokerFolder, "ApiImplicits.scala"));
     }
 
+    /**
+     * Convert Swagger Response object to Codegen Response object
+     *
+     * @param responseCode HTTP response code
+     * @param response Swagger Response object
+     * @return Codegen Response object
+     */
+    @Override
+    public CodegenResponse fromResponse(String responseCode, Response response) {
+        CodegenResponse r = super.fromResponse(responseCode, response);
+
+        if (response.getSchema() instanceof FileProperty) {
+            r.primitiveType = true;
+        }
+
+        return r;
+    }
+
     @Override
     public CodegenType getTag() {
         return CodegenType.CLIENT;
@@ -269,6 +286,7 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
 
             return getSwaggerType(p) + "[String, " + getTypeDeclaration(inner) + "]";
         }
+
         return super.getTypeDeclaration(p);
     }
 

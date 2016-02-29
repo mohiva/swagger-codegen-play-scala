@@ -40,7 +40,7 @@ import scala.util.{ Failure, Success, Try }
 object ApiJsonFormats {
 
   /**
-   * Converts [[org.joda.time.DateTime]] object to JSON and vice versa.
+   * Converts `org.joda.time.DateTime` object to JSON and vice versa.
    */
   implicit object DateTimeFormat extends Format[DateTime] {
     def reads(json: JsValue): JsResult[DateTime] = json.asOpt[String] map { str =>
