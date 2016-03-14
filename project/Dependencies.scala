@@ -46,7 +46,7 @@ object Dependencies {
     val jodaTime = "joda-time" % "joda-time" % "2.8.1"
     val playJsonExtension = "org.cvogt" %% "play-json-extensions" % "0.6.0"
     val playWSMock = "de.leanovate.play-mockws" %% "play-mockws" % "2.4.2"
-    val swaggerCodegen = "io.swagger" % "swagger-codegen" % "2.1.6-SNAPSHOT"
+    val swaggerCodegen = "io.swagger" % "swagger-codegen" % "2.1.5"
     val javaxInject = "javax.inject" % "javax.inject" % "1"
     val testNG = "org.testng" % "testng" % "6.8"
   }
