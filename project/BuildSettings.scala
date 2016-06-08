@@ -27,7 +27,7 @@ object BasicSettings extends AutoPlugin {
 
   override def projectSettings = Seq(
     organization := "com.mohiva",
-    version := "0.1.0-SNAPSHOT",
+    version := "0.2.0-SNAPSHOT",
     resolvers ++= Dependencies.resolvers,
     scalaVersion := Dependencies.Versions.scalaVersion,
     crossScalaVersions := Dependencies.Versions.crossScala,
@@ -46,7 +46,7 @@ object BasicSettings extends AutoPlugin {
     scalacOptions in Test ~= { (options: Seq[String]) =>
       options filterNot (_ == "-Ywarn-dead-code") // Allow dead code in tests (to support using mockito).
     },
-    parallelExecution in Test := false,
+    parallelExecution in Test := true,
     javaOptions in Test ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled"),
     fork in Test := true
   )
@@ -64,7 +64,7 @@ object CodeFormatter extends AutoPlugin {
     ScalariformKeys.preferences := ScalariformKeys.preferences.value
       .setPreference(FormatXml, false)
       .setPreference(DoubleIndentClassDeclaration, false)
-      .setPreference(PreserveDanglingCloseParenthesis, true)
+      .setPreference(DanglingCloseParenthesis, Preserve)
   )
 
   override def trigger = allRequirements

@@ -5,8 +5,8 @@ libraryDependencies ++= Seq(
   Dependencies.Library.playJsonExtension,
   Dependencies.Library.jodaTime,
   Dependencies.Library.Play.test % "test",
-  Dependencies.Library.Specs2.core % "test",
-  Dependencies.Library.Specs2.matcherExtra % "test",
-  Dependencies.Library.Specs2.mock % "test",
+  Dependencies.Library.Play.specs2 % "test",
+  Dependencies.Library.Play.Specs2.matcherExtra % "test",
+  Dependencies.Library.Play.Specs2.mock % "test",
   Dependencies.Library.playWSMock % "test"
 )

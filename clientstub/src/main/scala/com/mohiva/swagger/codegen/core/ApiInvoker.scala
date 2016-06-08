@@ -49,7 +49,8 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
    * @return The response.
    */
   def execute[C](apiRequest: ApiRequest)(
-    implicit ec: ExecutionContext): Future[ApiResponse[C]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[C]] = {
 
     val playRequest = apiRequest.toPlay(config, wsClient)
     playRequest.execute().flatMap { response =>
@@ -79,7 +80,7 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
 
       // Parse success response as File
       case Some((ResponseState.Success, tag, None)) if tag.tpe <:< typeOf[File] =>
-        serialize(response, tag)(createTempFile(response.bodyAsBytes)) { result =>
+        serialize(response, tag)(createTempFile(response.bodyAsBytes.toArray)) { result =>
           Success(ApiResponse(response.status, result.asInstanceOf[C], response.allHeaders))
         }
 
@@ -101,7 +102,7 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
 
       // Parse error response as File
       case Some((ResponseState.Error, tag, None)) if tag.tpe <:< typeOf[File] =>
-        serialize(response, tag)(createTempFile(response.bodyAsBytes)) { result =>
+        serialize(response, tag)(createTempFile(response.bodyAsBytes.toArray)) { result =>
           Failure(ApiError(response.status, ApiResponseError, Some(result), headers = response.allHeaders))
         }
 

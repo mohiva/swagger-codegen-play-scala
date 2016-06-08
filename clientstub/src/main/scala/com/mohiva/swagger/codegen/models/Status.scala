@@ -15,7 +15,7 @@
  */
 package com.mohiva.swagger.codegen.models
 
-import org.cvogt.play.json.Jsonx
+import ai.x.play.json.Jsonx
 
 /**
  * A Json model to test.

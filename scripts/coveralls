@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Runs sbt with default options.
+# Publishes the coverage report to http://coveralls.io.
 #
 # Copyright 2015 Mohiva Organisation (license at mohiva dot com)
 #
@@ -18,4 +18,10 @@
 #
 set -o nounset -o errexit
 
-scripts/sbt-runner -jvm-opts project/build-jvm-opts "$@"
+echo ""
+echo "Publish coverage report"
+scripts/sbt coveralls
+
+echo ""
+echo "Report published"
+echo ""

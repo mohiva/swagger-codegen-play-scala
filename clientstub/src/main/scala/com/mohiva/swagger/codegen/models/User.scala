@@ -15,8 +15,8 @@
  */
 package com.mohiva.swagger.codegen.models
 
+import ai.x.play.json.Jsonx
 import com.mohiva.swagger.codegen.core.ApiJsonFormats._
-import org.cvogt.play.json.Jsonx
 import org.joda.time.DateTime
 
 /**

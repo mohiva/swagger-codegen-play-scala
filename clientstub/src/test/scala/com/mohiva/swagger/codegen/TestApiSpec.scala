@@ -31,6 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Action
 import play.api.mvc.BodyParsers._
 import play.api.mvc.Results._
+import play.api.test.WithApplication
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -269,7 +270,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
       await(testApi.testRequestWithNonePrimitiveBody(None)).content must beEqualTo(())
     }
 
-    "send a request with multipart-form data" in new Context {
+    "send a request with multipart-form data" in new WithApplication with Context {
       val route = Route {
         case ("POST", "/test") => Action(parse.multipartFormData) { request =>
           val file = request.body.file("file")

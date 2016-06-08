@@ -6,6 +6,6 @@
   "projectOrganization": "com.mohiva",
   "projectName": "api-client",
   "projectVersion": "1.1.1",
-  "scalaVersion": "2.11.7",
-  "playVersion": "2.4.6"
+  "scalaVersion": "2.11.8",
+  "playVersion": "2.5.3"
 }

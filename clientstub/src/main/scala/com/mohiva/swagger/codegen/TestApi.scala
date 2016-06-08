@@ -162,7 +162,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with an empty body will be sent successfully.
    */
   def testRequestWithEmptyBody(rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Unit](204)
@@ -173,7 +174,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with a Json object body will be sent successfully.
    */
   def testRequestWithJsonObjectBody(body: User, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[User]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[User]] = {
 
     apiInvoker.execute[User](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withJsonBody[User](body)
@@ -185,7 +187,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with a Json array body will be sent successfully.
    */
   def testRequestWithJsonArrayBody(body: Seq[User], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Seq[User]]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Seq[User]]] = {
 
     apiInvoker.execute[Seq[User]](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withJsonBody[Seq[User]](body)
@@ -197,7 +200,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with Some Json body will be sent successfully.
    */
   def testRequestWithSomeJsonBody(body: Option[User], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[User]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[User]] = {
 
     apiInvoker.execute[User](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withJsonBody[User](body)
@@ -209,7 +213,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with None Json body will be sent successfully.
    */
   def testRequestWithNoneJsonBody(body: Option[User], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withJsonBody[User](body)
@@ -221,7 +226,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with a File body will be sent successfully.
    */
   def testRequestWithFileBody(body: File, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[File]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[File]] = {
 
     apiInvoker.execute[File](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
@@ -233,7 +239,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with an Int body will be sent successfully.
    */
   def testRequestWithIntBody(body: Int, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
@@ -245,7 +252,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with a String body will be sent successfully.
    */
   def testRequestWithStringBody(body: String, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
@@ -257,7 +265,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with a Boolean body will be sent successfully.
    */
   def testRequestWithBooleanBody(body: Boolean, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
@@ -269,7 +278,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with Some primitive body will be sent successfully.
    */
   def testRequestWithSomePrimitiveBody(body: Option[String], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
@@ -281,7 +291,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with None primitive body will be sent successfully.
    */
   def testRequestWithNonePrimitiveBody(body: Option[String], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
@@ -293,7 +304,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with multipart form data will be sent successfully.
    */
   def testRequestWithMultipartFormData(file: File, returnFile: Boolean, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[File]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[File]] = {
 
     apiInvoker.execute[File](ApiRequest(RequestMethod.POST, "", "/test", Some("multipart/form-data; charset=utf-8"), rc)
       .withFormParam("file", file)
@@ -306,7 +318,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with form-url-encoded data will be sent successfully.
    */
   def testRequestWithFormURLEncodedData(param1: String, param2: Int, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", Some("application/x-www-form-urlencoded; charset=utf-8"), rc)
       .withFormParam("param1", param1)
@@ -319,7 +332,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with an Int header will be sent successfully.
    */
   def testRequestWithIntHeader(header: Int, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
@@ -331,7 +345,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with a String header will be sent successfully.
    */
   def testRequestWithStringHeader(header: String, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
@@ -343,7 +358,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with a Boolean header will be sent successfully.
    */
   def testRequestWithBooleanHeader(header: Boolean, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
@@ -355,7 +371,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with Some string header will be sent successfully.
    */
   def testRequestWithSomeStringHeader(header: Option[String] = None, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
@@ -367,7 +384,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with None string header will be sent successfully.
    */
   def testRequestWithNoneStringHeader(header: Option[String] = None, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
@@ -379,7 +397,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with query parameters will be sent successfully.
    */
   def testRequestWithQueryParameters(param1: String, param2: Int, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param1", param1)
@@ -392,7 +411,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with array values[CSV] in query parameter will be sent successfully.
    */
   def testRequestWithArrayCsvQueryParameters(param: Seq[String], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.CSV))
@@ -404,7 +424,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with array values[TSV] in query parameter will be sent successfully.
    */
   def testRequestWithArrayTsvQueryParameters(param: Seq[String], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.TSV))
@@ -416,7 +437,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with array values[SSV] in query parameter will be sent successfully.
    */
   def testRequestWithArraySsvQueryParameters(param: Seq[String], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.SSV))
@@ -428,7 +450,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with array values[PIPES] in query parameter will be sent successfully.
    */
   def testRequestWithArrayPipesQueryParameters(param: Seq[String], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.PIPES))
@@ -440,7 +463,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with array values[MULTI] in query parameter will be sent successfully.
    */
   def testRequestWithArrayMultiQueryParameters(param: Seq[String], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.MULTI))
@@ -452,7 +476,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with Some array in query parameter will be sent successfully.
    */
   def testRequestWithSomeArrayQueryParameters(param: Option[Seq[String]], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.CSV))
@@ -464,7 +489,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with None array in query parameter will be sent successfully.
    */
   def testRequestWithNoneArrayQueryParameters(param: Option[Seq[String]], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.CSV))
@@ -476,7 +502,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with Some string parameter will be sent successfully.
    */
   def testRequestWithSomeStringQueryParameter(param: Option[String], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", param)
@@ -488,7 +515,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with None string parameter will be sent successfully.
    */
   def testRequestWithNoneStringQueryParameter(param: Option[String], rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", param)
@@ -500,7 +528,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with path parameters will be sent successfully.
    */
   def testRequestWithPathParameters(param1: String, param2: Int, rc: Config = Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test/{param1}/{param2}", None, rc)
       .withPathParam("param1", param1)
@@ -513,7 +542,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with basic auth credentials will be sent successfully.
    */
   def testRequestWithBasicCredentials(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext, basicAuth: ApiRequest.BasicCredentials): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext, basicAuth: ApiRequest.BasicCredentials): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withCredentials(basicAuth)
@@ -525,7 +555,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with API credentials will be sent successfully in the header.
    */
   def testRequestWithAPICredentialsInHeader(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext, apiKey: ApiRequest.ApiKey): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext, apiKey: ApiRequest.ApiKey): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withCredentials(ApiRequest.ApiKeyCredentials(apiKey, "X-AUTH", ApiRequest.ApiKeyLocations.HEADER))
@@ -537,7 +568,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with API credentials will be sent successfully in the query string.
    */
   def testRequestWithAPICredentialsInQueryString(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext, apiKey: ApiRequest.ApiKey): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext, apiKey: ApiRequest.ApiKey): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withCredentials(ApiRequest.ApiKeyCredentials(apiKey, "auth", ApiRequest.ApiKeyLocations.QUERY))
@@ -549,7 +581,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return Unit as value.
    */
   def testApiResponseWithUnitAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Unit](204)
@@ -560,7 +593,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a Json object as value.
    */
   def testApiResponseWithJsonObjectAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[User]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[User]] = {
 
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonSuccessResponse[User](200)
@@ -571,7 +605,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a Json array as value.
    */
   def testApiResponseWithJsonArrayAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Seq[User]]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Seq[User]]] = {
 
     apiInvoker.execute[Seq[User]](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonSuccessResponse[Seq[User]](200)
@@ -582,7 +617,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if the client returns an error if the API returns unexpected Json.
    */
   def testApiResponseForUnexpectedJson(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[User]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[User]] = {
 
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonSuccessResponse[User](200)
@@ -593,7 +629,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a File as value.
    */
   def testApiResponseWithFileAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[File]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[File]] = {
 
     apiInvoker.execute[File](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[File](200)
@@ -604,7 +641,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a String as value.
    */
   def testApiResponseWithStringAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[String](200)
@@ -615,7 +653,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a Long as value.
    */
   def testApiResponseWithLongAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Long]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Long]] = {
 
     apiInvoker.execute[Long](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Long](200)
@@ -626,7 +665,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a Int as value.
    */
   def testApiResponseWithIntAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Int]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Int]] = {
 
     apiInvoker.execute[Int](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Int](200)
@@ -637,7 +677,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a Double as value.
    */
   def testApiResponseWithDoubleAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Double]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Double]] = {
 
     apiInvoker.execute[Double](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Double](200)
@@ -648,7 +689,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a Float as value.
    */
   def testApiResponseWithFloatAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Float]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Float]] = {
 
     apiInvoker.execute[Float](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Float](200)
@@ -659,7 +701,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a Boolean as value.
    */
   def testApiResponseWithBooleanAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
 
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Boolean](200)
@@ -670,7 +713,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a response can return a Byte as value.
    */
   def testApiResponseWithByteAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Byte]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Byte]] = {
 
     apiInvoker.execute[Byte](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Byte](200)
@@ -681,7 +725,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if the client returns an error if the API returns an unexpected primitive type.
    */
   def testApiResponseForUnexpectedPrimitiveType(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
 
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Boolean](200)
@@ -692,7 +737,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return Unit as value.
    */
   def testApiErrorWithUnitAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Unit](500)
@@ -703,7 +749,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a Json object as value.
    */
   def testApiErrorWithJsonObjectAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[User]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[User]] = {
 
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonErrorResponse[Status](500)
@@ -714,7 +761,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a Json array as value.
    */
   def testApiErrorWithJsonArrayAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Seq[User]]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Seq[User]]] = {
 
     apiInvoker.execute[Seq[User]](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonErrorResponse[Seq[Status]](500)
@@ -725,7 +773,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if the client returns an error if the API returns unexpected Json.
    */
   def testApiErrorForUnexpectedJson(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[User]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[User]] = {
 
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonErrorResponse[Status](500)
@@ -736,7 +785,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a File as value.
    */
   def testApiErrorWithFileAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[File]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[File]] = {
 
     apiInvoker.execute[File](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[File](500)
@@ -747,7 +797,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a String as value.
    */
   def testApiErrorWithStringAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[String]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
 
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[String](500)
@@ -758,7 +809,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a Long as value.
    */
   def testApiErrorWithLongAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Long]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Long]] = {
 
     apiInvoker.execute[Long](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Long](500)
@@ -769,7 +821,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a Int as value.
    */
   def testApiErrorWithIntAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Int]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Int]] = {
 
     apiInvoker.execute[Int](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Int](500)
@@ -780,7 +833,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a Double as value.
    */
   def testApiErrorWithDoubleAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Double]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Double]] = {
 
     apiInvoker.execute[Double](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Double](500)
@@ -791,7 +845,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a Float as value.
    */
   def testApiErrorWithFloatAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Float]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Float]] = {
 
     apiInvoker.execute[Float](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Float](500)
@@ -802,7 +857,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a Boolean as value.
    */
   def testApiErrorWithBooleanAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
 
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Boolean](500)
@@ -813,7 +869,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a error can return a Byte as value.
    */
   def testApiErrorWithByteAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Byte]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Byte]] = {
 
     apiInvoker.execute[Byte](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Byte](500)
@@ -824,7 +881,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if the client returns an error if the API returns an unexpected primitive type.
    */
   def testApiErrorForUnexpectedPrimitiveType(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
 
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Boolean](500)
@@ -835,7 +893,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if the client returns extractable headers.
    */
   def testResponseHeaders(rc: ApiRequest.Config = ApiRequest.Config())(
-    implicit ec: ExecutionContext): Future[ApiResponse[Unit]] = {
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
 
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Unit](200)

@@ -20,15 +20,16 @@
 package com.mohiva.swagger.codegen.core
 
 import java.io.File
-import java.nio.file.{ Files, Paths }
 
+import akka.stream.scaladsl.{ FileIO, Source }
+import akka.util.ByteString
 import com.mohiva.swagger.codegen.core.ApiRequest._
 import org.joda.time.{ DateTime, DateTimeZone }
-import play.api.http.{ HeaderNames, MediaType, Writeable }
+import play.api.http.MediaType
 import play.api.libs.json._
 import play.api.libs.ws._
-import play.api.mvc.MultipartFormData.FilePart
-import play.api.mvc.{ Codec, MultipartFormData }
+import play.api.mvc.MultipartFormData.{ DataPart, FilePart, Part }
+import play.core.formatters.Multipart
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.reflect.ClassTag
@@ -253,7 +254,7 @@ object PlayRequest {
        */
       private def requestTimeoutPipeline: Pipeline = {
         case wsRequest =>
-          wsRequest.withRequestTimeout(config.requestTimeout.toMillis)
+          wsRequest.withRequestTimeout(config.requestTimeout)
       }
 
       /**
@@ -273,14 +274,17 @@ object PlayRequest {
               apiRequest.formParams.normalize match {
                 case p if p.isEmpty => wsRequest
                 case p if contentType.contains("multipart/form-data") =>
-                  import PlayRequest.MultipartFormDataWritable._
-                  wsRequest.withBody(p.foldLeft(MultipartFormData(Map[String, Seq[String]](), Seq[FilePart[File]](), Seq(), Seq())) {
-                    case (formData, (key, value)) =>
+                  val boundary = Multipart.randomBoundary()
+                  val contentType = s"multipart/form-data; boundary=$boundary"
+                  val body = p.foldLeft(List[Part[Source[ByteString, Any]]]()) {
+                    case (parts, (key, value)) =>
                       value match {
-                        case f: File => formData.copy(files = formData.files :+ FilePart(key, f.getName, None, f))
-                        case _ => formData.copy(dataParts = formData.dataParts + (key -> Seq(String.valueOf(value))))
+                        case f: File => parts :+ FilePart(key, f.getName, None, FileIO.fromFile(f))
+                        case _ => parts :+ DataPart(key, String.valueOf(value))
                       }
-                  })
+                  }
+
+                  wsRequest.withBody(StreamedBody(Multipart.transform(Source(body), boundary))).withHeaders("Content-Type" -> contentType)
                 case p => // default: application/x-www-form-urlencoded
                   wsRequest.withBody(p.toMap.mapValues(v => Seq(String.valueOf(v))))
               }
@@ -322,66 +326,6 @@ object PlayRequest {
 
           wsRequest.withQueryString(queryParams.toList: _*)
       }
-    }
-  }
-
-  /**
-   * A Play writable for multipart/form-data.
-   *
-   * @see http://tech.fongmun.com/post/125479939452/test-multipartformdata-in-play
-   */
-  object MultipartFormDataWritable {
-    val boundary = "--------ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-
-    /**
-     * Create the form data parts.
-     *
-     * @param data The form data.
-     * @return The form data part as string.
-     */
-    def formatDataParts(data: Map[String, Seq[String]]) = {
-      val dataParts = data.flatMap {
-        case (key, values) =>
-          values.map { value =>
-            val name = s""""$key""""
-            s"--$boundary\r\n${HeaderNames.CONTENT_DISPOSITION}: form-data; name=$name\r\n\r\n$value\r\n"
-          }
-      }.mkString("")
-      Codec.utf_8.encode(dataParts)
-    }
-
-    /**
-     * Creates the file header parts.
-     *
-     * @param file The file data.
-     * @return The file data parts as string.
-     */
-    def filePartHeader(file: FilePart[File]) = {
-      val name = s""""${file.key}""""
-      val filename = s""""${file.filename}""""
-      val contentType = file.contentType.map { ct =>
-        s"${HeaderNames.CONTENT_TYPE}: $ct\r\n"
-      }.getOrElse("")
-      Codec.utf_8.encode(s"--$boundary\r\n${HeaderNames.CONTENT_DISPOSITION}: form-data; name=$name; filename=$filename\r\n$contentType\r\n")
-    }
-
-    /**
-     * The writeable.
-     *
-     * @param ec The execution context.
-     */
-    implicit def writeable(implicit ec: ExecutionContext): Writeable[MultipartFormData[File]] = {
-      Writeable[MultipartFormData[File]](
-        transform = { form: MultipartFormData[File] =>
-          formatDataParts(form.dataParts) ++
-            form.files.flatMap { file =>
-              val fileBytes = Files.readAllBytes(Paths.get(file.ref.getAbsolutePath))
-              filePartHeader(file) ++ fileBytes ++ Codec.utf_8.encode("\r\n")
-            } ++
-            Codec.utf_8.encode(s"--$boundary--")
-        },
-        contentType = Some(s"multipart/form-data; boundary=$boundary")
-      )
     }
   }
 }

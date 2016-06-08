@@ -18,7 +18,7 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val crossScala = Seq("2.11.7")
+    val crossScala = Seq("2.11.8")
     val scalaVersion = crossScala.head
   }
 
@@ -30,23 +30,22 @@ object Dependencies {
   object Library {
 
     object Play {
-      val version = "2.4.6"
+      val version = "2.5.3"
       val ws = "com.typesafe.play" %% "play-ws" % version
       val json = "com.typesafe.play" %% "play-json" % version
       val test = "com.typesafe.play" %% "play-test" % version
-    }
-
-    object Specs2 {
-      private val version = "3.6.5"
-      val core = "org.specs2" %% "specs2-core" % version
-      val matcherExtra = "org.specs2" %% "specs2-matcher-extra" % version
-      val mock = "org.specs2" %% "specs2-mock" % version
+      val specs2 = "com.typesafe.play" %% "play-specs2" % version
+      object Specs2 {
+        private val version = "3.6.6"
+        val matcherExtra = "org.specs2" %% "specs2-matcher-extra" % version
+        val mock = "org.specs2" %% "specs2-mock" % version
+      }
     }
 
     val jodaTime = "joda-time" % "joda-time" % "2.8.1"
-    val playJsonExtension = "org.cvogt" %% "play-json-extensions" % "0.6.0"
-    val playWSMock = "de.leanovate.play-mockws" %% "play-mockws" % "2.4.2"
-    val swaggerCodegen = "io.swagger" % "swagger-codegen" % "2.1.5"
+    val playJsonExtension = "ai.x" %% "play-json-extensions" % "0.8.0"
+    val playWSMock = "de.leanovate.play-mockws" %% "play-mockws" % "2.5.0"
+    val swaggerCodegen = "io.swagger" % "swagger-codegen" % "2.1.6"
     val javaxInject = "javax.inject" % "javax.inject" % "1"
     val testNG = "org.testng" % "testng" % "6.8"
   }
