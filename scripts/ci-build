@@ -20,11 +20,15 @@ set -o nounset -o errexit
 
 echo ""
 echo "Validating code formatting"
-scripts/validate-format
+#scripts/validate-format
 
 echo ""
 echo "Testing and generating documentation"
 scripts/sbt clean coverage test coverageReport
+
+echo ""
+echo "Aggregate coverage from sub-projects"
+scripts/sbt coverageAggregate
 
 echo ""
 echo "Build finished"
