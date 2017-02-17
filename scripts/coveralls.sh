@@ -22,7 +22,7 @@ SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo ""
 echo "Publish coverage report"
-${SCRIPTS_DIR}/sbt.sh coveralls
+bash ${SCRIPTS_DIR}/sbt.sh coveralls
 
 echo ""
 echo "Report published"

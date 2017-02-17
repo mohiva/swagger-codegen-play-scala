@@ -27,7 +27,7 @@ git diff --quiet || (
   false
 )
 
-${SCRIPTS_DIR}/reformat.sh
+bash ${SCRIPTS_DIR}/reformat.sh
 
 git config color.diff.whitespace "red reverse ul"
 git --no-pager diff -R --color --exit-code || (

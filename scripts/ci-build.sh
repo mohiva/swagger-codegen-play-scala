@@ -22,11 +22,11 @@ SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo ""
 echo "Testing and generating documentation"
-${SCRIPTS_DIR}/sbt.sh clean coverage test coverageReport
+bash ${SCRIPTS_DIR}/sbt.sh clean coverage test coverageReport
 
 echo ""
 echo "Aggregate coverage from sub-projects"
-${SCRIPTS_DIR}/sbt.sh coverageAggregate
+bash ${SCRIPTS_DIR}/sbt.sh coverageAggregate
 
 echo ""
 echo "Build finished"

@@ -21,7 +21,7 @@ set -o nounset -o errexit
 
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-source $(SCRIPTS_DIR)/functions.sh
+source "$SCRIPTS_DIR/functions.sh"
 
 PID=$$
 TIMESTAMP=$(date +%s)
@@ -53,7 +53,7 @@ sed -i "s/com.mohiva.swagger.codegen.core/{{invokerPackage}}/g" ${TMP_DIR}/templ
 sed -i "s/com.mohiva.swagger.codegen.core/{{invokerPackage}}/g" ${TMP_DIR}/templates/apiResponse.mustache
 
 # Compile the codegen module
-${SCRIPTS_DIR}/sbt.sh codegen/compile
+bash ${SCRIPTS_DIR}/sbt.sh codegen/compile
 
 # Execute the codegen package
 if [ ! -f "$CODEGEN_ORIGINAL" ]
