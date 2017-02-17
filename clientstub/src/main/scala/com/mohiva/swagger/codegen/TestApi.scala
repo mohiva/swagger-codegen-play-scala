@@ -303,14 +303,23 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
   /**
    * Test if a request with multipart form data will be sent successfully.
    */
-  def testRequestWithMultipartFormData(file: File, returnFile: Boolean, rc: Config = Config())(
+  def testRequestWithMultipartFormData(
+    file: File,
+    files: Seq[File],
+    param: String,
+    returnFile: Boolean,
+    rc: Config = Config()
+  )(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[File]] = {
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
 
-    apiInvoker.execute[File](ApiRequest(RequestMethod.POST, "", "/test", Some("multipart/form-data; charset=utf-8"), rc)
+    apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", Some("multipart/form-data; charset=utf-8"), rc)
       .withFormParam("file", file)
+      .withFormParam("files", ApiParams.ArrayValues(files, ApiParams.CollectionFormats.MULTI))
+      .withFormParam("param", param)
       .withFormParam("returnFile", returnFile)
-      .withPrimitiveSuccessResponse[File](200)
+      .withPrimitiveSuccessResponse[String](200)
     )
   }
 

@@ -134,7 +134,11 @@ object ApiParams {
   implicit class AnyMapNormalizers(val m: Map[String, Any]) {
     def normalize: Seq[(String, Any)] = m.mapValues(_.normalize).toSeq.flatMap {
       case (name, EmptyValue(_)) => Seq()
-      case (name, ArrayValues(values, format)) if format == CollectionFormats.MULTI => values.map { v => name -> v }
+      case (name, ArrayValues(values, format)) if format == CollectionFormats.MULTI =>
+        m.values.exists(_.isInstanceOf[File]) match {
+          case false => values.map { v => name -> v }
+          case true => values.zipWithIndex.map { case (v, i) => name + i.toString -> v }
+        }
       case (k, v) => Seq(k -> v)
     }
   }

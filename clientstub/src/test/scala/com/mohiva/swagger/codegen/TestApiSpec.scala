@@ -273,16 +273,21 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     "send a request with multipart-form data" in new WithApplication with Context {
       val route = Route {
         case ("POST", "/test") => Action(parse.multipartFormData) { request =>
-          val file = request.body.file("file")
-          val returnFile = request.body.dataParts.get("returnFile").exists(_.exists(_ == "true"))
-          file -> returnFile match {
-            case (Some(f), true) => Ok.sendFile(f.ref.file)
-            case _ => NoContent
-          }
+          val file1 = request.body.file("file").map(_.filename).getOrElse(throw new Exception("Not found `file`"))
+          val file2 = request.body.file("files0").map(_.filename).getOrElse(throw new Exception("Not found `files0`"))
+          val file3 = request.body.file("files1").map(_.filename).getOrElse(throw new Exception("Not found `files1`"))
+          val param = request.body.dataParts("param").mkString("")
+          val returnFile = request.body.dataParts("returnFile").mkString("")
+          Ok(file1 + "-" + file2 + "-" + file3 + "-" + param + "-" + returnFile)
         }
       }
 
-      await(testApi.testRequestWithMultipartFormData(file("test.txt"), returnFile = true)).content must haveSameLinesAs(file("test.txt"))
+      await(testApi.testRequestWithMultipartFormData(
+        file("test1.txt"),
+        Seq(file("test2.txt"), file("test3.txt")),
+        "test",
+        returnFile = true
+      )).content must be equalTo "test1.txt-test2.txt-test3.txt-test-true"
     }
 
     "send a request with form-url-encoded data" in new Context {
