@@ -18,9 +18,11 @@
 #
 set -o nounset -o errexit
 
+SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 echo ""
 echo "Publish coverage report"
-scripts/sbt coveralls
+${SCRIPTS_DIR}/sbt.sh coveralls
 
 echo ""
 echo "Report published"

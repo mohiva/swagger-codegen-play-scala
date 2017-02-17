@@ -11,12 +11,12 @@ cache:
     - $HOME/.ivy2/cache
     - $HOME/.sbt/boot/
 script:
-  - scripts/ci-build
+  - scripts/ci-build.sh
   # cleanup travis trick from
   # http://www.scala-sbt.org/0.13/docs/Travis-CI-with-sbt.html#%28Experimental%29+Reusing+Ivy+cache
   - find $HOME/.sbt -name "*.lock" -delete
   - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
 after_success:
-  - scripts/coveralls
+  - scripts/coveralls.sh
 notifications:
   email: false

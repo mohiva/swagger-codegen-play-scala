@@ -20,12 +20,12 @@ wget http://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.1.6/swagger-
 
 Execute the script
 ```
-scripts/codegen -i ${SWAGGER_SPEC_FILE} -o ${SWAGGER_CLIENT_DIR} -c ${SWAGGER_CONF_FILE}
+scripts/codegen.sh -i ${SWAGGER_SPEC_FILE} -o ${SWAGGER_CLIENT_DIR} -c ${SWAGGER_CONF_FILE}
 ```
 
 To run the bundled `petstore` example:
 ```
-scripts/codegen -i conf/petstore.yaml -o build -c conf/config.json
+scripts/codegen.sh -i conf/petstore.yaml -o build -c conf/config.json
 ```
 
 Compile the client:
@@ -49,8 +49,6 @@ projectName         | Project name in generated build.sbt
 projectVersion      | Project version in generated build.sbt
 scalaVersion        | The Scala version to use in generated build.sbt
 playVersion         | The Play version to use in generated build.sbt
-
-
 
 [Swagger]: http://swagger.io/
 [Swagger Codegen]: https://github.com/swagger-api/swagger-codegen

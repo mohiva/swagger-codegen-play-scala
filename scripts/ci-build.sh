@@ -18,17 +18,15 @@
 #
 set -o nounset -o errexit
 
-echo ""
-echo "Validating code formatting"
-#scripts/validate-format
+SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo ""
 echo "Testing and generating documentation"
-scripts/sbt clean coverage test coverageReport
+${SCRIPTS_DIR}/sbt.sh clean coverage test coverageReport
 
 echo ""
 echo "Aggregate coverage from sub-projects"
-scripts/sbt coverageAggregate
+${SCRIPTS_DIR}/sbt.sh coverageAggregate
 
 echo ""
 echo "Build finished"

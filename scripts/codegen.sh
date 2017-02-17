@@ -18,13 +18,14 @@
 #
 
 set -o nounset -o errexit
-source $(dirname $0)/functions
+
+SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source $(SCRIPTS_DIR)/functions.sh
 
 PID=$$
 TIMESTAMP=$(date +%s)
-SCRIPT="$0"
-SCRIPT_DIR=$( cd "$( dirname "$SCRIPT" )" && pwd )
-PROJECT_DIR=$( dirname "$SCRIPT_DIR")
+PROJECT_DIR=$(readlink -f "$SCRIPTS_DIR/../")
 STUB_DIR="${PROJECT_DIR}/clientstub/src/main/scala/com/mohiva/swagger/codegen"
 TMP_DIR="/tmp/swagger-play-scala-generator-$PID$TIMESTAMP"
 
@@ -52,7 +53,7 @@ sed -i "s/com.mohiva.swagger.codegen.core/{{invokerPackage}}/g" ${TMP_DIR}/templ
 sed -i "s/com.mohiva.swagger.codegen.core/{{invokerPackage}}/g" ${TMP_DIR}/templates/apiResponse.mustache
 
 # Compile the codegen module
-${SCRIPT_DIR}/sbt codegen/compile
+${SCRIPTS_DIR}/sbt.sh codegen/compile
 
 # Execute the codegen package
 if [ ! -f "$CODEGEN_ORIGINAL" ]

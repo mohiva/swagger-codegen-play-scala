@@ -20,20 +20,22 @@
 #
 set -o nounset -o errexit
 
+SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 git diff --quiet || (
   echo "ERROR: The code formatting validation must be run on a repository with no pending changes."
   false
 )
 
-scripts/reformat
+${SCRIPTS_DIR}/reformat.sh
 
 git config color.diff.whitespace "red reverse ul"
 git --no-pager diff -R --color --exit-code || (
   echo ""
   echo "ERROR: The code is not formatted according to the project's standards."
   echo "The differences are shown above. Your code is shown in green and the expected format is shown in red."
-  echo "To perform this same validation on your environment, run 'scripts/validate-format'."
-  echo "To fix, format your sources running 'scripts/reformat' before submitting a pull request."
+  echo "To perform this same validation on your environment, run 'scripts/validate-format.sh'."
+  echo "To fix, format your sources running 'scripts/reformat.sh' before submitting a pull request."
   echo "After correcting, please squash your commits (eg, use 'git commit --amend') before updating your pull request."
   false
 )
