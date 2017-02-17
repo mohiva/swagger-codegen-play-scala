@@ -283,7 +283,7 @@ object PlayRequest {
                   val body = p.foldLeft(List[Part[Source[ByteString, Any]]]()) {
                     case (parts, (key, value)) =>
                       value match {
-                        case f: File => parts :+ FilePart(key, f.getName, None, FileIO.fromFile(f))
+                        case f: File => parts :+ FilePart(key, f.getName, None, FileIO.fromPath(f.toPath))
                         case _ => parts :+ DataPart(key, String.valueOf(value))
                       }
                   }

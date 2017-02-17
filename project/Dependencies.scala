@@ -30,7 +30,7 @@ object Dependencies {
   object Library {
 
     object Play {
-      val version = "2.5.3"
+      val version = "2.5.12"
       val ws = "com.typesafe.play" %% "play-ws" % version
       val json = "com.typesafe.play" %% "play-json" % version
       val test = "com.typesafe.play" %% "play-test" % version
@@ -44,7 +44,7 @@ object Dependencies {
 
     val jodaTime = "joda-time" % "joda-time" % "2.8.1"
     val playJsonExtension = "ai.x" %% "play-json-extensions" % "0.8.0"
-    val playWSMock = "de.leanovate.play-mockws" %% "play-mockws" % "2.5.0"
+    val playWSMock = "de.leanovate.play-mockws" %% "play-mockws" % "2.5.1"
     val swaggerCodegen = "io.swagger" % "swagger-codegen" % "2.1.6"
     val javaxInject = "javax.inject" % "javax.inject" % "1"
     val testNG = "org.testng" % "testng" % "6.8"
