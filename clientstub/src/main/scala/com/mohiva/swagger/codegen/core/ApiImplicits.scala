@@ -133,7 +133,12 @@ object ApiParams {
     def normalize: Seq[(String, Any)] = m.mapValues(_.normalize).toSeq.flatMap {
       case (name, EmptyValue(_)) => Seq()
       case (name, ArrayValues(values, format)) if format == CollectionFormats.MULTI =>
-        m.values.exists(_.isInstanceOf[ApiFile]) match {
+        val containsFile = (value: Any) => value match {
+          case _: ApiFile => true
+          case _ => false
+        }
+
+        m.values.exists(containsFile) match {
           case false => values.map { v => name -> v }
           case true => values.zipWithIndex.map { case (v, i) => name + i.toString -> v }
         }
