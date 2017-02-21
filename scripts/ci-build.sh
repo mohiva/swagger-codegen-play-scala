@@ -26,7 +26,7 @@ bash ${SCRIPTS_DIR}/sbt.sh clean coverage test coverageReport
 
 echo ""
 echo "Aggregate coverage from sub-projects"
-bash ${SCRIPTS_DIR}/sbt.sh coverageAggregate
+bash ${SCRIPTS_DIR}/sbt.sh codegen/coverageAggregate
 
 echo ""
 echo "Build finished"

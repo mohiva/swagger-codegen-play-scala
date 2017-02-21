@@ -39,6 +39,7 @@ LANGUAGE="io.swagger.codegen.languages.PlayScalaClientCodegen"
 # Prepare the codegen templates
 mkdir -p ${TMP_DIR}/templates
 cp ${TEMPLATES}/* ${TMP_DIR}/templates
+cp ${STUB_DIR}/core/ApiFile.scala ${TMP_DIR}/templates/apiFile.mustache
 cp ${STUB_DIR}/core/ApiConfig.scala ${TMP_DIR}/templates/apiConfig.mustache
 cp ${STUB_DIR}/core/ApiImplicits.scala ${TMP_DIR}/templates/apiImplicits.mustache
 cp ${STUB_DIR}/core/ApiInvoker.scala ${TMP_DIR}/templates/apiInvoker.mustache
@@ -46,6 +47,7 @@ cp ${STUB_DIR}/core/ApiRequest.scala ${TMP_DIR}/templates/apiRequest.mustache
 cp ${STUB_DIR}/core/ApiResponse.scala ${TMP_DIR}/templates/apiResponse.mustache
 
 # Replace the hardcoded package names with the variable package names
+sed -i "s/com.mohiva.swagger.codegen.core/{{invokerPackage}}/g" ${TMP_DIR}/templates/apiFile.mustache
 sed -i "s/com.mohiva.swagger.codegen.core/{{invokerPackage}}/g" ${TMP_DIR}/templates/apiConfig.mustache
 sed -i "s/com.mohiva.swagger.codegen.core/{{invokerPackage}}/g" ${TMP_DIR}/templates/apiImplicits.mustache
 sed -i "s/com.mohiva.swagger.codegen.core/{{invokerPackage}}/g" ${TMP_DIR}/templates/apiInvoker.mustache

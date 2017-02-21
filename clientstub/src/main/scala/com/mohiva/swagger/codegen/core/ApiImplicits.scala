@@ -19,9 +19,7 @@
  */
 package com.mohiva.swagger.codegen.core
 
-import java.io.File
-
-import akka.stream.scaladsl.{ FileIO, Source }
+import akka.stream.scaladsl.{ Source, StreamConverters }
 import akka.util.ByteString
 import com.mohiva.swagger.codegen.core.ApiRequest._
 import org.joda.time.{ DateTime, DateTimeZone }
@@ -135,7 +133,7 @@ object ApiParams {
     def normalize: Seq[(String, Any)] = m.mapValues(_.normalize).toSeq.flatMap {
       case (name, EmptyValue(_)) => Seq()
       case (name, ArrayValues(values, format)) if format == CollectionFormats.MULTI =>
-        m.values.exists(_.isInstanceOf[File]) match {
+        m.values.exists(_.isInstanceOf[ApiFile]) match {
           case false => values.map { v => name -> v }
           case true => values.zipWithIndex.map { case (v, i) => name + i.toString -> v }
         }
@@ -269,7 +267,7 @@ object PlayRequest {
       private def bodyPipeline: Pipeline = {
         case wsRequest =>
           apiRequest.bodyParam.normalize match {
-            case file: File => wsRequest.withBody(FileBody(file))
+            case file: ApiFile => wsRequest.withBody(StreamedBody(StreamConverters.fromInputStream(() => file.content)))
             case NumericValue(numeric) => wsRequest.withBody(numeric.value)
             case string: String => wsRequest.withBody(String.valueOf(string))
             case json: JsValue => wsRequest.withBody(json)
@@ -283,7 +281,7 @@ object PlayRequest {
                   val body = p.foldLeft(List[Part[Source[ByteString, Any]]]()) {
                     case (parts, (key, value)) =>
                       value match {
-                        case f: File => parts :+ FilePart(key, f.getName, None, FileIO.fromPath(f.toPath))
+                        case f: ApiFile => parts :+ FilePart(key, f.name, None, StreamConverters.fromInputStream(() => f.content))
                         case _ => parts :+ DataPart(key, String.valueOf(value))
                       }
                   }

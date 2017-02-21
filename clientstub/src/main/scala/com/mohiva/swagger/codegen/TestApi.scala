@@ -19,7 +19,6 @@
  */
 package com.mohiva.swagger.codegen
 
-import java.io.File
 import javax.inject.Inject
 
 import com.mohiva.swagger.codegen.core.ApiParams.{ ArrayValues, CollectionFormats }
@@ -225,13 +224,13 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
   /**
    * Test if a request with a File body will be sent successfully.
    */
-  def testRequestWithFileBody(body: File, rc: Config = Config())(
+  def testRequestWithFileBody(body: ApiFile, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[File]] = {
+    ec: ExecutionContext): Future[ApiResponse[ApiFile]] = {
 
-    apiInvoker.execute[File](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
+    apiInvoker.execute[ApiFile](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
-      .withPrimitiveSuccessResponse[File](200)
+      .withPrimitiveSuccessResponse[ApiFile](200)
     )
   }
 
@@ -304,8 +303,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    * Test if a request with multipart form data will be sent successfully.
    */
   def testRequestWithMultipartFormData(
-    file: File,
-    files: Seq[File],
+    file: ApiFile,
+    files: Seq[ApiFile],
     param: String,
     returnFile: Boolean,
     rc: Config = Config()
@@ -639,10 +638,10 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithFileAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[File]] = {
+    ec: ExecutionContext): Future[ApiResponse[ApiFile]] = {
 
-    apiInvoker.execute[File](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
-      .withPrimitiveSuccessResponse[File](200)
+    apiInvoker.execute[ApiFile](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
+      .withPrimitiveSuccessResponse[ApiFile](200)
     )
   }
 
@@ -795,10 +794,10 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithFileAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[File]] = {
+    ec: ExecutionContext): Future[ApiResponse[ApiFile]] = {
 
-    apiInvoker.execute[File](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
-      .withPrimitiveErrorResponse[File](500)
+    apiInvoker.execute[ApiFile](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
+      .withPrimitiveErrorResponse[ApiFile](500)
     )
   }
 

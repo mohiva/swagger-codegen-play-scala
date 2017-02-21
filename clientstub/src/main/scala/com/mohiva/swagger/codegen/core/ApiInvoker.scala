@@ -19,7 +19,8 @@
  */
 package com.mohiva.swagger.codegen.core
 
-import java.io.{ File, FileOutputStream }
+import java.io.ByteArrayInputStream
+import java.util.UUID
 import javax.inject.Inject
 
 import com.mohiva.swagger.codegen.core.ApiInvoker._
@@ -79,8 +80,8 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
         }
 
       // Parse success response as File
-      case Some((ResponseState.Success, tag, None)) if tag.tpe <:< typeOf[File] =>
-        serialize(response, tag)(createTempFile(response.bodyAsBytes.toArray)) { result =>
+      case Some((ResponseState.Success, tag, None)) if tag.tpe <:< typeOf[ApiFile] =>
+        serialize(response, tag)(ApiFile(UUID.randomUUID.toString, new ByteArrayInputStream(response.bodyAsBytes.toArray))) { result =>
           Success(ApiResponse(response.status, result.asInstanceOf[C], response.allHeaders))
         }
 
@@ -101,8 +102,8 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
         }
 
       // Parse error response as File
-      case Some((ResponseState.Error, tag, None)) if tag.tpe <:< typeOf[File] =>
-        serialize(response, tag)(createTempFile(response.bodyAsBytes.toArray)) { result =>
+      case Some((ResponseState.Error, tag, None)) if tag.tpe <:< typeOf[ApiFile] =>
+        serialize(response, tag)(ApiFile(UUID.randomUUID.toString, new ByteArrayInputStream(response.bodyAsBytes.toArray))) { result =>
           Failure(ApiError(response.status, ApiResponseError, Some(result), headers = response.allHeaders))
         }
 
@@ -173,21 +174,6 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
       case e: Exception =>
         throw new RuntimeException(s"Cannot cast type `$valueType` to expected type `$expectedType`", e)
     }
-  }
-
-  /**
-   * Creates a temporary file.
-   *
-   * @param bytes The file content.
-   * @return a reference to the temporary file.
-   */
-  private def createTempFile(bytes: Array[Byte]) = {
-    val temp = File.createTempFile("swagger_client", ".tmp")
-    val fileOutFile: FileOutputStream = new FileOutputStream(temp)
-    fileOutFile.write(bytes)
-    fileOutFile.close()
-    temp.deleteOnExit()
-    temp
   }
 }
 

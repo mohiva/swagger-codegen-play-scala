@@ -22,30 +22,30 @@ import java.util.*;
  * https://github.com/mohiva/swagger-codegen-play-scala
  */
 public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenConfig {
-    protected String mainPackage = "io.swagger.client";
-    protected String invokerPackage = mainPackage + ".core";
-    protected String sourceFolder = "src/main/scala";
-    protected String resourcesFolder = "src/main/resources";
+    private String mainPackage = "io.swagger.client";
+    private String invokerPackage = mainPackage + ".core";
+    private String sourceFolder = "src/main/scala";
+    private String resourcesFolder = "src/main/resources";
 
     /**
      * Project based values for the build.sbt file.
      */
-    protected String projectOrganization = "io.swagger";
-    protected String projectName = "swagger-client";
-    protected String projectVersion = "1.0.0";
-    protected String scalaVersion = "2.11.7";
-    protected String playVersion = "2.4.6";
+    private String projectOrganization = "io.swagger";
+    private String projectName = "swagger-client";
+    private String projectVersion = "1.0.0";
+    private String scalaVersion = "2.11.7";
+    private String playVersion = "2.4.6";
 
     /**
      * Typesafe config based values.
      */
-    protected String configPath = mainPackage;
+    private String configPath = mainPackage;
 
     /**
      * Config values which affect the generation of the client.
      */
-    protected boolean renderJavadoc = true;
-    protected boolean removeOAuthSecurities = true;
+    private boolean renderJavadoc = true;
+    private boolean removeOAuthSecurities = true;
 
     /**
      * If set to true, only the default response (the one with le lowest 2XX code) will be considered as a success, and all
@@ -53,29 +53,29 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
      * If set to false, all responses defined in the model will be considered as a success upon reception. Only http errors,
      * unmarshalling problems and any other RuntimeException will be considered as ApiErrors.
      */
-    protected boolean onlyOneSuccess = true;
+    private boolean onlyOneSuccess = true;
 
     /**
      * Some custom codegen constants.
      */
-    class CustomCodegenConstants {
-        public static final String CONFIG_PATH = "configPath";
-        public static final String CONFIG_PATH_DESC = "path under which the config must be defined";
+    private class CustomCodegenConstants {
+        static final String CONFIG_PATH = "configPath";
+        static final String CONFIG_PATH_DESC = "path under which the config must be defined";
 
-        public static final String PROJECT_ORGANIZATION = "projectOrganization";
-        public static final String PROJECT_ORGANIZATION_DESC = "project organization in generated build.sbt";
+        static final String PROJECT_ORGANIZATION = "projectOrganization";
+        static final String PROJECT_ORGANIZATION_DESC = "project organization in generated build.sbt";
 
-        public static final String PROJECT_NAME = "projectName";
-        public static final String PROJECT_NAME_DESC = "project name in generated build.sbt";
+        static final String PROJECT_NAME = "projectName";
+        static final String PROJECT_NAME_DESC = "project name in generated build.sbt";
 
-        public static final String PROJECT_VERSION = "projectVersion";
-        public static final String PROJECT_VERSION_DESC = "project version in generated build.sbt";
+        static final String PROJECT_VERSION = "projectVersion";
+        static final String PROJECT_VERSION_DESC = "project version in generated build.sbt";
 
-        public static final String SCALA_VERSION = "scalaVersion";
-        public static final String SCALA_VERSION_DESC = "the Scala version to use in generated build.sbt";
+        static final String SCALA_VERSION = "scalaVersion";
+        static final String SCALA_VERSION_DESC = "the Scala version to use in generated build.sbt";
 
-        public static final String PLAY_VERSION = "playVersion";
-        public static final String PLAY_VERSION_DESC = "the Play version to use in generated build.sbt";
+        static final String PLAY_VERSION = "playVersion";
+        static final String PLAY_VERSION_DESC = "the Play version to use in generated build.sbt";
     }
 
     /**
@@ -133,7 +133,7 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         typeMapping.put("long", "Long");
         typeMapping.put("double", "Double");
         typeMapping.put("object", "Any");
-        typeMapping.put("file", "File");
+        typeMapping.put("file", "ApiFile");
         typeMapping.put("number", "Double");
 
         languageSpecificPrimitives = new HashSet<>(
@@ -219,11 +219,14 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         additionalProperties.put(CustomCodegenConstants.PLAY_VERSION, playVersion);
 
         final String invokerFolder = (sourceFolder + File.separator + invokerPackage).replace(".", File.separator);
+        supportingFiles.add(new SupportingFile("apiFile.mustache", invokerFolder, "ApiFile.scala"));
         supportingFiles.add(new SupportingFile("apiConfig.mustache", invokerFolder, "ApiConfig.scala"));
         supportingFiles.add(new SupportingFile("apiRequest.mustache", invokerFolder, "ApiRequest.scala"));
         supportingFiles.add(new SupportingFile("apiResponse.mustache", invokerFolder, "ApiResponse.scala"));
         supportingFiles.add(new SupportingFile("apiInvoker.mustache", invokerFolder, "ApiInvoker.scala"));
         supportingFiles.add(new SupportingFile("apiImplicits.mustache", invokerFolder, "ApiImplicits.scala"));
+
+        importMapping.put("ApiFile", invokerPackage + ".ApiFile");
     }
 
     /**
@@ -454,7 +457,7 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
     private static class CamelizeLambda extends CustomLambda {
         private final boolean capitalizeFirst;
 
-        public CamelizeLambda(boolean capitalizeFirst) {
+        CamelizeLambda(boolean capitalizeFirst) {
             this.capitalizeFirst = capitalizeFirst;
         }
 

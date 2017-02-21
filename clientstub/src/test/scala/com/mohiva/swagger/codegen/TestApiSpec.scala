@@ -15,13 +15,14 @@
  */
 package com.mohiva.swagger.codegen
 
-import java.io.{ File, FileNotFoundException }
-import java.net.URL
+import java.io.FileNotFoundException
+import java.nio.file.{ Path, Paths }
 
 import com.mohiva.swagger.codegen.core.ApiRequest.{ ApiKey, BasicCredentials }
-import com.mohiva.swagger.codegen.core.{ ApiConfig, ApiError, ApiInvoker }
+import com.mohiva.swagger.codegen.core.{ ApiConfig, ApiError, ApiFile, ApiInvoker }
 import com.mohiva.swagger.codegen.models.User
 import mockws.{ MockWS, Route }
+import org.apache.commons.io.IOUtils
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.specs2.control.NoLanguageFeatures
 import org.specs2.matcher.ContentMatchers
@@ -195,6 +196,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     }
 
     "send a request with a File body" in new Context {
+      val path = Paths.get("test.txt")
       val route = Route {
         case ("POST", "/test") => Action { request =>
           val f = request.body.asRaw.map(_.asFile).get
@@ -202,7 +204,9 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         }
       }
 
-      await(testApi.testRequestWithFileBody(file("test.txt"))).content must haveSameLinesAs(file("test.txt"))
+      val file: ApiFile = await(testApi.testRequestWithFileBody(file(path))).content
+
+      file.asByteArray must be equalTo file(path).asByteArray
     }
 
     "send a request with an Int body" in new Context {
@@ -283,8 +287,8 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
       }
 
       await(testApi.testRequestWithMultipartFormData(
-        file("test1.txt"),
-        Seq(file("test2.txt"), file("test3.txt")),
+        file(Paths.get("test1.txt")),
+        Seq(file(Paths.get("test2.txt")), file(Paths.get("test3.txt"))),
         "test",
         returnFile = true
       )).content must be equalTo "test1.txt-test2.txt-test3.txt-test-true"
@@ -578,11 +582,13 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     "return an ApiResponse with a File as value" in new Context {
       val route = Route {
         case ("GET", "/test") => Action { request =>
-          Ok.sendFile(file("test.txt"))
+          Ok.sendResource("test.txt")
         }
       }
 
-      await(testApi.testApiResponseWithFileAsValue()).content must haveSameLinesAs(file("test.txt"))
+      val file: ApiFile = await(testApi.testApiResponseWithFileAsValue()).content
+
+      file.asByteArray must be equalTo file(Paths.get("test.txt")).asByteArray
     }
 
     "return an ApiResponse with a String as value" in new Context {
@@ -728,14 +734,14 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     "return an ApiError with a File as value" in new Context {
       val route = Route {
         case ("GET", "/test") => Action { request =>
-          InternalServerError.sendFile(file("test.txt"))
+          InternalServerError.sendResource("test.txt")
         }
       }
 
-      await(testApi.testApiErrorWithFileAsValue()) must throwA[ApiError[File]].like {
+      await(testApi.testApiErrorWithFileAsValue()) must throwA[ApiError[ApiFile]].like {
         case e: ApiError[_] =>
           e.content must beSome.like {
-            case f: File => f must haveSameLinesAs(file("test.txt"))
+            case f: ApiFile => f.asByteArray must be equalTo file(Paths.get("test.txt")).asByteArray
           }
           e.getMessage must contain(ApiInvoker.ApiResponseError)
       }
@@ -885,6 +891,15 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
   trait Context extends Scope {
 
     /**
+     * Monkey patches the `ApiFile` instance.
+     *
+     * @param apiFile The `ApiFile` instance to patch.
+     */
+    implicit class RichApiFile(apiFile: ApiFile) {
+      def asByteArray: Array[Byte] = IOUtils.toByteArray(apiFile.content)
+    }
+
+    /**
      * The route.
      */
     def route: Route
@@ -936,11 +951,11 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     /**
      * Helper function to load a file from class path.
      */
-    def file(path: String) = {
-      val url: URL = Option(this.getClass.getClassLoader.getResource(path)).getOrElse {
+    def file(path: Path) = {
+      val is = Option(this.getClass.getClassLoader.getResourceAsStream(path.toString)).getOrElse {
         throw new FileNotFoundException("Cannot find test file: " + path)
       }
-      new File(url.getFile)
+      ApiFile(path.getFileName.toString, is)
     }
 
     /**
