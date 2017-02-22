@@ -138,7 +138,7 @@ object ApiParams {
           case _ => false
         }
 
-        m.values.exists(containsFile) match {
+        values.exists(containsFile) match {
           case false => values.map { v => name -> v }
           case true => values.zipWithIndex.map { case (v, i) => name + i.toString -> v }
         }
