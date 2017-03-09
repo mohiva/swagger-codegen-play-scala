@@ -545,6 +545,19 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
       await(testApi.testApiResponseWithUnitAsValue()).content must beEqualTo(())
     }
 
+    "send a request with a default primitive type" in new Context {
+      val route = Route {
+        case ("POST", "/test") => Action { request =>
+          request.body.asText match {
+            case Some(txt) => Ok(txt)
+            case None => NoContent
+          }
+        }
+      }
+
+      await(testApi.testRequestWithDefaultPrimitiveType("test")).content must be equalTo "test"
+    }
+
     "return an ApiResponse with a Json object as value" in new Context {
       val route = Route {
         case ("GET", "/test") => Action { request =>
@@ -577,6 +590,16 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
           e.content must beNone
           e.getMessage must contain("serialize")
       }
+    }
+
+    "return an ApiResponse for a default Json response" in new Context {
+      val route = Route {
+        case ("GET", "/test") => Action { request =>
+          Ok(Json.toJson(user))
+        }
+      }
+
+      await(testApi.testApiResponseWithDefaultJsonResponse()).content must be equalTo user
     }
 
     "return an ApiResponse with a File as value" in new Context {
@@ -731,6 +754,20 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
       }
     }
 
+    "return an ApiError with a default Json response" in new Context {
+      val route = Route {
+        case ("GET", "/test") => Action { request =>
+          InternalServerError(Json.toJson(status))
+        }
+      }
+
+      await(testApi.testApiErrorWithDefaultJsonResponse()) must throwA[ApiError[Status]].like {
+        case e: ApiError[_] =>
+          e.content must beSome(status)
+          e.getMessage must contain(ApiInvoker.ApiResponseError)
+      }
+    }
+
     "return an ApiError with a File as value" in new Context {
       val route = Route {
         case ("GET", "/test") => Action { request =>
@@ -853,6 +890,20 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
       }
 
       await(testApi.testApiErrorForUnexpectedPrimitiveType()) must throwA[ApiError[_]].like {
+        case e: ApiError[_] =>
+          e.content must beNone
+          e.getMessage must contain("serialize")
+      }
+    }
+
+    "return an ApiError if for a default primitive type" in new Context {
+      val route = Route {
+        case ("GET", "/test") => Action { request =>
+          InternalServerError("not-boolean")
+        }
+      }
+
+      await(testApi.testApiErrorForDefaultPrimitiveType()) must throwA[ApiError[_]].like {
         case e: ApiError[_] =>
           e.content must beNone
           e.getMessage must contain("serialize")

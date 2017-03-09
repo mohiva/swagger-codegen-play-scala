@@ -68,7 +68,7 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
    * @return The parsed response on success or an error on failure.
    */
   private def parseResponse[C](apiRequest: ApiRequest, response: WSResponse): Try[ApiResponse[C]] = {
-    apiRequest.responses.get(response.status) match {
+    apiRequest.responses.get(response.status).orElse(apiRequest.responses.get(0)) match {
       // Parse success response as Unit
       case Some((ResponseState.Success, TypeTag.Unit, _)) =>
         Success(ApiResponse[C](response.status, ().asInstanceOf[C], response.allHeaders))

@@ -598,6 +598,19 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
   }
 
   /**
+   * Test if a request with a String body will be sent successfully.
+   */
+  def testRequestWithDefaultPrimitiveType(body: String, rc: Config = Config())(
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[String]] = {
+
+    apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
+      .withPrimitiveBody(body)
+      .withDefaultPrimitiveSuccessResponse[String]
+    )
+  }
+
+  /**
    * Test if a response can return a Json object as value.
    */
   def testApiResponseWithJsonObjectAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
@@ -630,6 +643,18 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
 
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonSuccessResponse[User](200)
+    )
+  }
+
+  /**
+   * Test if a response can return a Json object as value.
+   */
+  def testApiResponseWithDefaultJsonResponse(rc: ApiRequest.Config = ApiRequest.Config())(
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[User]] = {
+
+    apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
+      .withDefaultJsonSuccessResponse[User]
     )
   }
 
@@ -790,6 +815,18 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
   }
 
   /**
+   * Test if a error can return a default JSON response.
+   */
+  def testApiErrorWithDefaultJsonResponse(rc: ApiRequest.Config = ApiRequest.Config())(
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[User]] = {
+
+    apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
+      .withDefaultJsonErrorResponse[Status]
+    )
+  }
+
+  /**
    * Test if a error can return a File as value.
    */
   def testApiErrorWithFileAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
@@ -894,6 +931,18 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
 
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Boolean](500)
+    )
+  }
+
+  /**
+   * Test if the client returns an error for a default primitive type.
+   */
+  def testApiErrorForDefaultPrimitiveType(rc: ApiRequest.Config = ApiRequest.Config())(
+    implicit
+    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
+
+    apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
+      .withDefaultPrimitiveErrorResponse[Boolean]
     )
   }
 
