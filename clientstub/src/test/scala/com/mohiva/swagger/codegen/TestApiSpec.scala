@@ -17,20 +17,19 @@ package com.mohiva.swagger.codegen
 
 import java.io.FileNotFoundException
 import java.nio.file.{ Path, Paths }
+import java.time.{ LocalDate, OffsetDateTime, ZoneOffset }
 
 import com.mohiva.swagger.codegen.core.ApiRequest.{ ApiKey, BasicCredentials }
 import com.mohiva.swagger.codegen.core.{ ApiConfig, ApiError, ApiFile, ApiInvoker }
 import com.mohiva.swagger.codegen.models.User
-import mockws.{ MockWS, Route }
+import mockws.{ MockWS, MockWSHelpers, Route }
 import org.apache.commons.io.IOUtils
-import org.joda.time.{ DateTime, DateTimeZone }
 import org.specs2.control.NoLanguageFeatures
 import org.specs2.matcher.ContentMatchers
 import org.specs2.mutable.Specification
 import org.specs2.specification.Scope
+import play.api.http.{ DefaultFileMimeTypes, FileMimeTypes, FileMimeTypesConfiguration }
 import play.api.libs.json.Json
-import play.api.mvc.Action
-import play.api.mvc.BodyParsers._
 import play.api.mvc.Results._
 import play.api.test.WithApplication
 
@@ -42,7 +41,7 @@ import scala.language.postfixOps
 /**
  * Test case for the [[TestApi]] class.
  */
-class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatchers {
+class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatchers with MockWSHelpers {
 
   "The `API` handler" should {
     "send a GET request" in new Context {
@@ -59,7 +58,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
 
     "send a POST request with body" in new Context {
       val route = Route {
-        case ("POST", "/test") => Action(parse.json) { request =>
+        case ("POST", "/test") => Action(BodyParser.json) { request =>
           Ok(request.body)
         }
       }
@@ -75,7 +74,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
 
     "send a PUT request with body" in new Context {
       val route = Route {
-        case ("PUT", "/test") => Action(parse.json) { request =>
+        case ("PUT", "/test") => Action(BodyParser.json) { request =>
           Ok(request.body)
         }
       }
@@ -91,7 +90,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
 
     "send a PATCH request with body" in new Context {
       val route = Route {
-        case ("PATCH", "/test") => Action(parse.json) { request =>
+        case ("PATCH", "/test") => Action(BodyParser.json) { request =>
           Ok(request.body)
         }
       }
@@ -107,7 +106,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
 
     "send a DELETE request with body" in new Context {
       val route = Route {
-        case ("DELETE", "/test") => Action(parse.json) { request =>
+        case ("DELETE", "/test") => Action(BodyParser.json) { request =>
           Ok(request.body)
         }
       }
@@ -141,7 +140,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
 
     "send a request with an empty body" in new Context {
       val route = Route {
-        case ("POST", "/test") => Action { request =>
+        case ("POST", "/test") => Action { _ =>
           NoContent
         }
       }
@@ -151,7 +150,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
 
     "send a request with a Json object body" in new Context {
       val route = Route {
-        case ("POST", "/test") => Action(parse.json) { request =>
+        case ("POST", "/test") => Action(BodyParser.json) { request =>
           Ok(request.body)
         }
       }
@@ -161,7 +160,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
 
     "send a request with a Json array body" in new Context {
       val route = Route {
-        case ("POST", "/test") => Action(parse.json) { request =>
+        case ("POST", "/test") => Action(BodyParser.json) { request =>
           Ok(request.body)
         }
       }
@@ -174,7 +173,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("POST", "/test") => Action { request =>
           request.body.asJson match {
             case Some(txt) => Ok(txt)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -187,7 +186,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("POST", "/test") => Action { request =>
           request.body.asJson match {
             case Some(txt) => Ok(txt)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -196,7 +195,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     }
 
     "send a request with a File body" in new Context {
-      val path = Paths.get("test.txt")
+      val path: Path = Paths.get("test.txt")
       val route = Route {
         case ("POST", "/test") => Action { request =>
           val f = request.body.asRaw.map(_.asFile).get
@@ -214,7 +213,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("POST", "/test") => Action { request =>
           request.body.asText match {
             case Some(txt) => Ok(txt)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -227,7 +226,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("POST", "/test") => Action { request =>
           request.body.asText match {
             case Some(txt) => Ok(txt)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -240,7 +239,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("POST", "/test") => Action { request =>
           request.body.asText match {
             case Some(txt) => Ok(txt)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -253,7 +252,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("POST", "/test") => Action { request =>
           request.body.asText match {
             case Some(txt) => Ok(txt)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -266,7 +265,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("POST", "/test") => Action { request =>
           request.body.asText match {
             case Some(txt) => Ok(txt)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -276,7 +275,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
 
     "send a request with multipart-form data" in new WithApplication with Context {
       val route = Route {
-        case ("POST", "/test") => Action(parse.multipartFormData) { request =>
+        case ("POST", "/test") => Action(BodyParser.multipartFormData) { request =>
           val file1 = request.body.file("file").map(_.filename).getOrElse(throw new Exception("Not found `file`"))
           val file2 = request.body.file("files0").map(_.filename).getOrElse(throw new Exception("Not found `files0`"))
           val file3 = request.body.file("files1").map(_.filename).getOrElse(throw new Exception("Not found `files1`"))
@@ -296,7 +295,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
 
     "send a request with form-url-encoded data" in new Context {
       val route = Route {
-        case ("POST", "/test") => Action(parse.urlFormEncoded) { request =>
+        case ("POST", "/test") => Action(BodyParser.formUrlEncoded) { request =>
           Ok(toQueryString(request.body))
         }
       }
@@ -309,7 +308,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.headers.get("X-HEADER") match {
             case Some(header) => Ok(header)
-            case None => NoContent
+            case None         => NoContent
           }
         }
       }
@@ -322,7 +321,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.headers.get("X-HEADER") match {
             case Some(header) => Ok(header)
-            case None => NoContent
+            case None         => NoContent
           }
         }
       }
@@ -335,7 +334,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.headers.get("X-HEADER") match {
             case Some(header) => Ok(header)
-            case None => NoContent
+            case None         => NoContent
           }
         }
       }
@@ -348,7 +347,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.headers.get("X-HEADER") match {
             case Some(header) => Ok(header)
-            case None => NoContent
+            case None         => NoContent
           }
         }
       }
@@ -361,7 +360,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.headers.get("X-HEADER") match {
             case Some(header) => Ok(header)
-            case None => NoContent
+            case None         => NoContent
           }
         }
       }
@@ -434,7 +433,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.queryString.get("param") match {
             case Some(param) => Ok(toQueryString(request.queryString))
-            case None => NoContent
+            case None        => NoContent
           }
         }
       }
@@ -447,7 +446,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.queryString.get("param") match {
             case Some(param) => Ok(toQueryString(request.queryString))
-            case None => NoContent
+            case None        => NoContent
           }
         }
       }
@@ -460,7 +459,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.queryString.get("param") match {
             case Some(param) => Ok(toQueryString(request.queryString))
-            case None => NoContent
+            case None        => NoContent
           }
         }
       }
@@ -473,7 +472,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.queryString.get("param") match {
             case Some(param) => Ok(toQueryString(request.queryString))
-            case None => NoContent
+            case None        => NoContent
           }
         }
       }
@@ -492,19 +491,17 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     }
 
     "send a request with basic credentials" in new Context {
-      skipped("Cannot be tested because of missing functionality in play-mockws: https://github.com/leanovate/play-mockws/issues/12")
-
       val route = Route {
         case ("GET", "/test") => Action { request =>
           request.headers.get("Authorization") match {
             case Some(header) => Ok(header)
-            case None => NoContent
+            case None         => NoContent
           }
         }
       }
 
-      implicit val credentials = BasicCredentials("user", "password")
-      await(testApi.testRequestWithBasicCredentials()).content must be equalTo ""
+      implicit val credentials: BasicCredentials = BasicCredentials("user", "password")
+      await(testApi.testRequestWithBasicCredentials()).content must be equalTo "Basic: dXNlcjpwYXNzd29yZA=="
     }
 
     "send a request with API credentials in the header" in new Context {
@@ -512,7 +509,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.headers.get("X-AUTH") match {
             case Some(key) => Ok(key)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -526,7 +523,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("GET", "/test") => Action { request =>
           request.queryString.get("auth").flatMap(_.headOption) match {
             case Some(key) => Ok(key)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -550,7 +547,7 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
         case ("POST", "/test") => Action { request =>
           request.body.asText match {
             case Some(txt) => Ok(txt)
-            case None => NoContent
+            case None      => NoContent
           }
         }
       }
@@ -956,6 +953,13 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     def route: Route
 
     /**
+     * The file mime types.
+     */
+    implicit val fileMimeTypes: FileMimeTypes = new DefaultFileMimeTypes(FileMimeTypesConfiguration(Map(
+      "json" -> "application/json"
+    )))
+
+    /**
      * A user.
      */
     lazy val user = User(
@@ -965,8 +969,9 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
       roles = Seq("user", "admin"),
       gender = User.Gender.Male,
       activated = true,
+      dateOfBirth = LocalDate.of(1979, 2, 17),
       lastLogin = None,
-      insertDate = new DateTime(2016, 2, 19, 13, 28, 43, 0).withZone(DateTimeZone.UTC)
+      insertDate = OffsetDateTime.of(2016, 2, 19, 13, 28, 43, 0, ZoneOffset.UTC)
     )
 
     /**
@@ -997,12 +1002,12 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     /**
      * Helper method to await futures.
      */
-    def await[A](f: Future[A]) = Await.result(f, 10 seconds)
+    def await[A](f: Future[A]): A = Await.result(f, 10 seconds)
 
     /**
      * Helper function to load a file from class path.
      */
-    def file(path: Path) = {
+    def file(path: Path): ApiFile = {
       val is = Option(this.getClass.getClassLoader.getResourceAsStream(path.toString)).getOrElse {
         throw new FileNotFoundException("Cannot find test file: " + path)
       }
@@ -1012,8 +1017,14 @@ class TestApiSpec extends Specification with NoLanguageFeatures with ContentMatc
     /**
      * Helper function which converts the given data into a query string format.
      */
-    def toQueryString(data: Map[String, Seq[String]]) = {
-      data.map { case (k, v) => k -> v.map(v => k -> v) }.values.flatten.map { case (key, value) => key + "=" + value }.mkString("&")
+    def toQueryString(data: Map[String, Seq[String]]): String = {
+      data.map {
+        case (k, v) =>
+          k -> v.map(v => k -> v)
+      }.values.flatten.map {
+        case (key, value) =>
+          key + "=" + value
+      }.mkString("&")
     }
   }
 }

@@ -1,5 +1,4 @@
 # Swagger Codegen - Play Scala [![Build Status](https://travis-ci.org/mohiva/swagger-codegen-play-scala.png)](https://travis-ci.org/mohiva/swagger-codegen-play-scala) [![Coverage Status](https://coveralls.io/repos/mohiva/swagger-codegen-play-scala/badge.svg?branch=master&service=github)](https://coveralls.io/github/mohiva/swagger-codegen-play-scala?branch=master) [![Join the chat at https://gitter.im/mohiva/swagger-codegen-play-scala](https://badges.gitter.im/mohiva/swagger-codegen-play-scala.svg)](https://gitter.im/mohiva/swagger-codegen-play-scala?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-=========
 
 A code generator for [Swagger] which generates API clients with the help of the PlayWS library. This code generator is based on the `akka-scala` generator included in the [Swagger Codegen] distribution.
 
@@ -8,14 +7,15 @@ A code generator for [Swagger] which generates API clients with the help of the 
 Project             | Play
 --------------------|------------------
 0.1.x               | 2.4
-master              | 2.5
+0.2.x               | 2.5
+master              | 2.6
 
 ## Create client
 
 Download swagger codegen executable into the root directory of this project:
 
 ```
-wget http://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.1.6/swagger-codegen-cli-2.1.6.jar -O swagger-codegen-cli.jar
+wget http://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.2.3/swagger-codegen-cli-2.2.3.jar -O swagger-codegen-cli.jar
 ```
 
 Execute the script

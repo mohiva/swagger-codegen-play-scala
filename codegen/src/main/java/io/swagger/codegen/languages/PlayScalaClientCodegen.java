@@ -7,7 +7,7 @@ import io.swagger.codegen.*;
 import io.swagger.models.Response;
 import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.properties.*;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,8 +33,8 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
     private String projectOrganization = "io.swagger";
     private String projectName = "swagger-client";
     private String projectVersion = "1.0.0";
-    private String scalaVersion = "2.11.7";
-    private String playVersion = "2.4.6";
+    private String scalaVersion = "2.12.3";
+    private String playVersion = "2.6.6";
 
     /**
      * Typesafe config based values.
@@ -116,7 +116,8 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         importMapping.remove("Set");
         importMapping.remove("Map");
 
-        importMapping.put("DateTime", "org.joda.time.DateTime");
+        importMapping.put("OffsetDateTime", "java.time.OffsetDateTime");
+        importMapping.put("LocalDate", "java.time.LocalDate");
 
         typeMapping = new HashMap<>();
         typeMapping.put("array", "Seq");
@@ -135,6 +136,8 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         typeMapping.put("object", "Any");
         typeMapping.put("file", "ApiFile");
         typeMapping.put("number", "Double");
+        typeMapping.put("DateTime", "OffsetDateTime");
+        typeMapping.put("date", "LocalDate");
 
         languageSpecificPrimitives = new HashSet<>(
             Arrays.asList(
@@ -170,44 +173,30 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
 
         if (additionalProperties.containsKey(CodegenConstants.INVOKER_PACKAGE)) {
             invokerPackage = (String) additionalProperties.get(CodegenConstants.INVOKER_PACKAGE);
-        } else {
-            additionalProperties.put(CodegenConstants.INVOKER_PACKAGE, invokerPackage);
         }
 
         if (additionalProperties.containsKey(CustomCodegenConstants.CONFIG_PATH)) {
             configPath = (String) additionalProperties.get(CustomCodegenConstants.CONFIG_PATH);
-        } else {
-            additionalProperties.put(CustomCodegenConstants.CONFIG_PATH, configPath);
         }
 
         if (additionalProperties.containsKey(CustomCodegenConstants.PROJECT_ORGANIZATION)) {
             projectOrganization = (String) additionalProperties.get(CustomCodegenConstants.PROJECT_ORGANIZATION);
-        } else {
-            additionalProperties.put(CustomCodegenConstants.PROJECT_ORGANIZATION, projectOrganization);
         }
 
         if (additionalProperties.containsKey(CustomCodegenConstants.PROJECT_NAME)) {
             projectName = (String) additionalProperties.get(CustomCodegenConstants.PROJECT_NAME);
-        } else {
-            additionalProperties.put(CustomCodegenConstants.PROJECT_NAME, projectName);
         }
 
         if (additionalProperties.containsKey(CustomCodegenConstants.PROJECT_VERSION)) {
             projectVersion = (String) additionalProperties.get(CustomCodegenConstants.PROJECT_VERSION);
-        } else {
-            additionalProperties.put(CustomCodegenConstants.PROJECT_VERSION, projectVersion);
         }
 
         if (additionalProperties.containsKey(CustomCodegenConstants.SCALA_VERSION)) {
             scalaVersion = (String) additionalProperties.get(CustomCodegenConstants.SCALA_VERSION);
-        } else {
-            additionalProperties.put(CustomCodegenConstants.SCALA_VERSION, scalaVersion);
         }
 
         if (additionalProperties.containsKey(CustomCodegenConstants.PLAY_VERSION)) {
             playVersion = (String) additionalProperties.get(CustomCodegenConstants.PLAY_VERSION);
-        } else {
-            additionalProperties.put(CustomCodegenConstants.PLAY_VERSION, playVersion);
         }
 
         additionalProperties.put(CodegenConstants.INVOKER_PACKAGE, invokerPackage);
@@ -227,6 +216,66 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         supportingFiles.add(new SupportingFile("apiImplicits.mustache", invokerFolder, "ApiImplicits.scala"));
 
         importMapping.put("ApiFile", invokerPackage + ".ApiFile");
+    }
+
+    /**
+     * A codegen property that is a container type has an inner type that can either be a container itself or a
+     * non-container type. This method returns the non-container type of a codegen property by traversing recursively
+     * the `items` of a `CodegenProperty`.
+     *
+     * @param property The codegen property to traverse recursively.
+     * @return The non-container item.
+     */
+    private CodegenProperty getNonContainerItem(CodegenProperty property) {
+        if (property.isContainer) {
+            return getNonContainerItem(property.items);
+        }
+
+        return property;
+    }
+
+    /**
+     * In Scala we must not import Models which are located in the same package. If we do that, we get an warning
+     * like this:
+     *
+     * ```
+     * imported `Tag' is permanently hidden by definition of object Tag in package models
+     * ```
+     *
+     * So we remove all model imports from model files to avoid this warning.
+     */
+    @Override
+    public Map<String, Object> postProcessModels(Map<String, Object> objectMap) {
+        Map<String, Object> processed = super.postProcessModels(objectMap);
+
+        // Get the model imports
+        List<String> modelImports = new ArrayList<>();
+        List<Map<String, Object>> models = (List<Map<String, Object>>) processed.get("models");
+        for (Map<String, Object> model : models) {
+            Object value = model.get("model");
+            if (value instanceof CodegenModel) {
+                CodegenModel codegenModel = (CodegenModel) value;
+                for (CodegenProperty property : codegenModel.allVars) {
+                    CodegenProperty item = getNonContainerItem(property);
+                    if (item != null && !item.isPrimitiveType && !importMapping.containsKey(item.datatype)) {
+                        if (!modelImports.contains(item.datatype)) {
+                            modelImports.add(toModelImport(item.datatype));
+                        }
+                    }
+                }
+            }
+        }
+
+        // Remove the model imports
+        Iterator<Map<String, String>> imports = ((List<Map<String, String>>) processed.get("imports")).iterator();
+        while (imports.hasNext()) {
+            String value = imports.next().get("import");
+            if (modelImports.contains(value)) {
+                imports.remove();
+            }
+        }
+
+        return processed;
     }
 
     /**
@@ -408,6 +457,17 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         } else {
             return "null";
         }
+    }
+
+    @Override
+    public String escapeUnsafeCharacters(String input) {
+        return input.replace("*/", "*_/").replace("/*", "/_*");
+    }
+
+    @Override
+    public String escapeQuotationMark(String input) {
+        // remove " to avoid code injection
+        return input.replace("\"", "");
     }
 
     private String formatIdentifier(String name, boolean capitalized) {

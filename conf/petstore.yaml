@@ -546,6 +546,9 @@ definitions:
       status:
         type: string
         description: pet status in the store
+      color:
+        type: string
+        enum: [black, white, brown]
   Tag:
     type: object
     properties:

@@ -120,7 +120,7 @@ case class ApiHeaderExtractor(headers: Map[String, Seq[String]]) {
    * @param conversion The cast function.
    * @return The header value casted by the given conversion.
    */
-  private def castedHeader[U](name: String, index: Int = 0, conversion: String => U): Option[U] = {
+  private def castedHeader[U](name: String, index: Int, conversion: String => U): Option[U] = {
     Try {
       asString(name, index).map(conversion)
     }.get

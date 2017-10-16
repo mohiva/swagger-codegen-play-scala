@@ -62,7 +62,7 @@ case class ApiRequest(
    * @tparam T The type of the response.
    * @return The request to provide a fluent interface.
    */
-  def withJsonSuccessResponse[T: TypeTag: Reads](code: Int) = copy(responses = responses +
+  def withJsonSuccessResponse[T: TypeTag: Reads](code: Int): ApiRequest = copy(responses = responses +
     ((code, (ResponseState.Success, implicitly[TypeTag[T]], Some(implicitly[Reads[T]]))))
   )
 
@@ -73,7 +73,7 @@ case class ApiRequest(
    * @tparam T The type of the response.
    * @return The request to provide a fluent interface.
    */
-  def withJsonErrorResponse[T: TypeTag: Reads](code: Int) = copy(responses = responses +
+  def withJsonErrorResponse[T: TypeTag: Reads](code: Int): ApiRequest = copy(responses = responses +
     ((code, (ResponseState.Error, implicitly[TypeTag[T]], Some(implicitly[Reads[T]]))))
   )
 
@@ -84,7 +84,7 @@ case class ApiRequest(
    * @tparam T The type of the response.
    * @return The request to provide a fluent interface.
    */
-  def withPrimitiveSuccessResponse[T: TypeTag](code: Int) = copy(responses = responses +
+  def withPrimitiveSuccessResponse[T: TypeTag](code: Int): ApiRequest = copy(responses = responses +
     ((code, (ResponseState.Success, implicitly[TypeTag[T]], None)))
   )
 
@@ -95,7 +95,7 @@ case class ApiRequest(
    * @tparam T The type of the response.
    * @return The request to provide a fluent interface.
    */
-  def withPrimitiveErrorResponse[T: TypeTag](code: Int) = copy(responses = responses +
+  def withPrimitiveErrorResponse[T: TypeTag](code: Int): ApiRequest = copy(responses = responses +
     ((code, (ResponseState.Error, implicitly[TypeTag[T]], None)))
   )
 
@@ -105,7 +105,7 @@ case class ApiRequest(
    * @tparam T The type of the response.
    * @return The request to provide a fluent interface.
    */
-  def withDefaultJsonSuccessResponse[T: TypeTag: Reads] = withJsonSuccessResponse[T](0)
+  def withDefaultJsonSuccessResponse[T: TypeTag: Reads]: ApiRequest = withJsonSuccessResponse[T](0)
 
   /**
    * Adds a default Json error response to the request.
@@ -113,7 +113,7 @@ case class ApiRequest(
    * @tparam T The type of the response.
    * @return The request to provide a fluent interface.
    */
-  def withDefaultJsonErrorResponse[T: TypeTag: Reads] = withJsonErrorResponse[T](0)
+  def withDefaultJsonErrorResponse[T: TypeTag: Reads]: ApiRequest = withJsonErrorResponse[T](0)
 
   /**
    * Adds a default primitive success response to the request.
@@ -121,7 +121,7 @@ case class ApiRequest(
    * @tparam T The type of the response.
    * @return The request to provide a fluent interface.
    */
-  def withDefaultPrimitiveSuccessResponse[T: TypeTag] = withPrimitiveSuccessResponse[T](0)
+  def withDefaultPrimitiveSuccessResponse[T: TypeTag]: ApiRequest = withPrimitiveSuccessResponse[T](0)
 
   /**
    * Adds a default primitive error response to the request.
@@ -129,7 +129,7 @@ case class ApiRequest(
    * @tparam T The type of the response.
    * @return The request to provide a fluent interface.
    */
-  def withDefaultPrimitiveErrorResponse[T: TypeTag] = withPrimitiveErrorResponse[T](0)
+  def withDefaultPrimitiveErrorResponse[T: TypeTag]: ApiRequest = withPrimitiveErrorResponse[T](0)
 
   /**
    * Adds a Json body to the request.
@@ -137,7 +137,7 @@ case class ApiRequest(
    * @param body The Json body to add.
    * @return The request to provide a fluent interface.
    */
-  def withJsonBody[B: Writes](body: B) = copy(bodyParam = Some(Json.toJson(body)))
+  def withJsonBody[B: Writes](body: B): ApiRequest = copy(bodyParam = Some(Json.toJson(body)))
 
   /**
    * Adds an optional Json body to the request.
@@ -145,7 +145,7 @@ case class ApiRequest(
    * @param body The Json body to add.
    * @return The request to provide a fluent interface.
    */
-  def withJsonBody[B: Writes](body: Option[B]) = copy(bodyParam = body.map(j => Json.toJson(j)))
+  def withJsonBody[B: Writes](body: Option[B]): ApiRequest = copy(bodyParam = body.map(j => Json.toJson(j)))
 
   /**
    * Adds a primitive body to the request.
@@ -153,7 +153,7 @@ case class ApiRequest(
    * @param body The primitive body to add.
    * @return The request to provide a fluent interface.
    */
-  def withPrimitiveBody(body: Any) = copy(bodyParam = Some(body))
+  def withPrimitiveBody(body: Any): ApiRequest = copy(bodyParam = Some(body))
 
   /**
    * Adds a form param to the request.
@@ -162,7 +162,7 @@ case class ApiRequest(
    * @param value The param value.
    * @return The request to provide a fluent interface.
    */
-  def withFormParam(name: String, value: Any) = copy(formParams = formParams + (name -> value))
+  def withFormParam(name: String, value: Any): ApiRequest = copy(formParams = formParams + (name -> value))
 
   /**
    * Adds a path param to the request.
@@ -171,7 +171,7 @@ case class ApiRequest(
    * @param value The param value.
    * @return The request to provide a fluent interface.
    */
-  def withPathParam(name: String, value: Any) = copy(pathParams = pathParams + (name -> value))
+  def withPathParam(name: String, value: Any): ApiRequest = copy(pathParams = pathParams + (name -> value))
 
   /**
    * Adds a query param to the request.
@@ -180,7 +180,7 @@ case class ApiRequest(
    * @param value The param value.
    * @return The request to provide a fluent interface.
    */
-  def withQueryParam(name: String, value: Any) = copy(queryParams = queryParams + (name -> value))
+  def withQueryParam(name: String, value: Any): ApiRequest = copy(queryParams = queryParams + (name -> value))
 
   /**
    * Adds a header param to the request.
@@ -189,7 +189,7 @@ case class ApiRequest(
    * @param value The param value.
    * @return The request to provide a fluent interface.
    */
-  def withHeaderParam(name: String, value: Any) = copy(headerParams = headerParams + (name -> value))
+  def withHeaderParam(name: String, value: Any): ApiRequest = copy(headerParams = headerParams + (name -> value))
 
   /**
    * Adds credentials to the request.
@@ -197,7 +197,7 @@ case class ApiRequest(
    * @param credentials The credentials to add.
    * @return The request to provide a fluent interface.
    */
-  def withCredentials(credentials: Credentials) = copy(credentials = this.credentials :+ credentials)
+  def withCredentials(credentials: Credentials): ApiRequest = copy(credentials = this.credentials :+ credentials)
 }
 
 /**

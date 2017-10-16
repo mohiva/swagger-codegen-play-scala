@@ -29,7 +29,6 @@ import com.mohiva.swagger.codegen.core.PlayRequest._
 import play.api.libs.ws._
 
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.language.{ implicitConversions, reflectiveCalls }
 import scala.reflect.runtime.universe.{ Type, TypeTag, typeOf }
 import scala.util.{ Failure, Success, Try }
 
@@ -51,7 +50,8 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
    */
   def execute[C](apiRequest: ApiRequest)(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[C]] = {
+    ec: ExecutionContext
+  ): Future[ApiResponse[C]] = {
 
     val playRequest = apiRequest.toPlay(config, wsClient)
     playRequest.execute().flatMap { response =>
@@ -71,52 +71,52 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
     apiRequest.responses.get(response.status).orElse(apiRequest.responses.get(0)) match {
       // Parse success response as Unit
       case Some((ResponseState.Success, TypeTag.Unit, _)) =>
-        Success(ApiResponse[C](response.status, ().asInstanceOf[C], response.allHeaders))
+        Success(ApiResponse[C](response.status, ().asInstanceOf[C], response.headers))
 
       // Parse success response as Json
       case Some((ResponseState.Success, tag, Some(reads))) =>
         serialize(response, tag)(response.json.as(reads)) { result =>
-          Success(ApiResponse(response.status, result.asInstanceOf[C], response.allHeaders))
+          Success(ApiResponse(response.status, result.asInstanceOf[C], response.headers))
         }
 
       // Parse success response as File
       case Some((ResponseState.Success, tag, None)) if tag.tpe <:< typeOf[ApiFile] =>
         serialize(response, tag)(ApiFile(UUID.randomUUID.toString, new ByteArrayInputStream(response.bodyAsBytes.toArray))) { result =>
-          Success(ApiResponse(response.status, result.asInstanceOf[C], response.allHeaders))
+          Success(ApiResponse(response.status, result.asInstanceOf[C], response.headers))
         }
 
       // Parse success response as primitive type
       case Some((ResponseState.Success, tag, None)) =>
         serialize(response, tag)(castValue(response.body, tag.tpe)) { result =>
-          Success(ApiResponse(response.status, result.asInstanceOf[C], response.allHeaders))
+          Success(ApiResponse(response.status, result.asInstanceOf[C], response.headers))
         }
 
       // Parse error response as Unit
       case Some((ResponseState.Error, TypeTag.Unit, _)) =>
-        Failure(ApiError(response.status, ApiResponseError, None, headers = response.allHeaders))
+        Failure(ApiError(response.status, ApiResponseError, None, headers = response.headers))
 
       // Parse error response as Json
       case Some((ResponseState.Error, tag, Some(reads))) =>
         serialize(response, tag)(response.json.as(reads)) { result =>
-          Failure(ApiError(response.status, ApiResponseError, Some(result), headers = response.allHeaders))
+          Failure(ApiError(response.status, ApiResponseError, Some(result), headers = response.headers))
         }
 
       // Parse error response as File
       case Some((ResponseState.Error, tag, None)) if tag.tpe <:< typeOf[ApiFile] =>
         serialize(response, tag)(ApiFile(UUID.randomUUID.toString, new ByteArrayInputStream(response.bodyAsBytes.toArray))) { result =>
-          Failure(ApiError(response.status, ApiResponseError, Some(result), headers = response.allHeaders))
+          Failure(ApiError(response.status, ApiResponseError, Some(result), headers = response.headers))
         }
 
       // Parse error response as primitive type
       case Some((ResponseState.Error, tag, None)) =>
         serialize(response, tag)(castValue(response.body, tag.tpe)) { result =>
-          Failure(ApiError(response.status, ApiResponseError, Some(result), headers = response.allHeaders))
+          Failure(ApiError(response.status, ApiResponseError, Some(result), headers = response.headers))
         }
 
       // Unexpected response
       case None =>
-        val message = UnexpectedStatusCodeError.format(response.status)
-        Failure(ApiError(response.status, message, None, headers = response.allHeaders))
+        val message = UnexpectedStatusCodeError.format(response.statusText)
+        Failure(ApiError(response.status, message, None, headers = response.headers))
     }
   }
 
@@ -130,13 +130,15 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
    * @tparam T The type of the result.
    * @return The parsed response on success or an error on failure.
    */
-  private def serialize[T](response: WSResponse, tag: TypeTag[_])(op: => Any)(r: Any => Try[ApiResponse[T]]): Try[ApiResponse[T]] = {
+  private def serialize[T](response: WSResponse, tag: TypeTag[_])(op: => Any)(
+    r: Any => Try[ApiResponse[T]]
+  ): Try[ApiResponse[T]] = {
     Try(op) match {
       case Success(result) => r(result)
       case Failure(e) =>
         val runtimeClass = tag.mirror.runtimeClass(tag.tpe)
         val message = ResponseSerializationError.format(response.body, runtimeClass)
-        Failure(ApiError(response.status, message, None, e, response.allHeaders))
+        Failure(ApiError(response.status, message, None, e, response.headers))
     }
   }
 
@@ -153,22 +155,22 @@ class ApiInvoker @Inject() (config: ApiConfig, wsClient: WSClient) {
     val valueType = if (value != null) currentMirror.classSymbol(value.getClass).toType else typeOf[Null]
     try {
       expectedType match {
-        case _ if valueType =:= typeOf[Null] => value
+        case _ if valueType =:= typeOf[Null]      => value
         case _ if valueType =:= typeOf[None.type] => value
         case t: Type if t <:< typeOf[Option[Any]] => try {
           val TypeRef(_, _, args) = t
           Some(castValue(value, args.head))
         } catch {
-          case e: Exception => None
+          case _: Exception => None
         }
-        case t: Type if t =:= typeOf[String] => value.toString
-        case t: Type if t =:= typeOf[Long] => value.toString.trim.toLong
-        case t: Type if t =:= typeOf[Int] => value.toString.trim.toInt
-        case t: Type if t =:= typeOf[Double] => value.toString.trim.toDouble
-        case t: Type if t =:= typeOf[Float] => value.toString.trim.toFloat
+        case t: Type if t =:= typeOf[String]  => value.toString
+        case t: Type if t =:= typeOf[Long]    => value.toString.trim.toLong
+        case t: Type if t =:= typeOf[Int]     => value.toString.trim.toInt
+        case t: Type if t =:= typeOf[Double]  => value.toString.trim.toDouble
+        case t: Type if t =:= typeOf[Float]   => value.toString.trim.toFloat
         case t: Type if t =:= typeOf[Boolean] => value.toString.trim.toBoolean
-        case t: Type if t =:= typeOf[Byte] => value.toString.trim.toByte
-        case t: Type => throw new RuntimeException("Unexpected type: " + t)
+        case t: Type if t =:= typeOf[Byte]    => value.toString.trim.toByte
+        case t: Type                          => throw new RuntimeException("Unexpected type: " + t)
       }
     } catch {
       case e: Exception =>
@@ -187,5 +189,5 @@ object ApiInvoker {
    */
   val ApiResponseError = "Retrieved error from API"
   val ResponseSerializationError = "Couldn't serialize response: %s; to type: %s"
-  val UnexpectedStatusCodeError = "API returns unexpected status code: %s"
+  val UnexpectedStatusCodeError = "API returns unexpected status: %s"
 }

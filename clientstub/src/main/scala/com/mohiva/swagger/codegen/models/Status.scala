@@ -15,22 +15,23 @@
  */
 package com.mohiva.swagger.codegen.models
 
-import ai.x.play.json.Jsonx
-
 /**
  * A Json model to test.
  */
 case class Status(
   status: String,
-  error: Option[Error])
+  error: Option[Error]
+)
 
 /**
  * The companion object.
  */
 object Status {
+  import ai.x.play.json.Jsonx
+  import play.api.libs.json.OFormat
 
   /**
    * Converts a [[Status]] class into a JSON object.
    */
-  implicit val jsonFormat = Jsonx.formatCaseClass[Status]
+  implicit val jsonFormat: OFormat[Status] = Jsonx.formatCaseClass[Status]
 }

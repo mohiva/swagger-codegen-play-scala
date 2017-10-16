@@ -3,7 +3,6 @@ libraryDependencies ++= Seq(
   Dependencies.Library.Play.json,
   Dependencies.Library.javaxInject,
   Dependencies.Library.playJsonExtension,
-  Dependencies.Library.jodaTime,
   Dependencies.Library.Play.test % "test",
   Dependencies.Library.Play.specs2 % "test",
   Dependencies.Library.Play.Specs2.matcherExtra % "test",

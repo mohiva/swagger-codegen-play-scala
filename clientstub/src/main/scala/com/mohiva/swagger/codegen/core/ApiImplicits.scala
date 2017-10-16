@@ -22,35 +22,18 @@ package com.mohiva.swagger.codegen.core
 import akka.stream.scaladsl.{ Source, StreamConverters }
 import akka.util.ByteString
 import com.mohiva.swagger.codegen.core.ApiRequest._
-import org.joda.time.{ DateTime, DateTimeZone }
 import play.api.http.MediaType
 import play.api.libs.json._
 import play.api.libs.ws._
 import play.api.mvc.MultipartFormData.{ DataPart, FilePart, Part }
-import play.core.formatters.Multipart
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.Future
 import scala.reflect.ClassTag
-import scala.util.{ Failure, Success, Try }
 
 /**
  * Some default Json formats.
  */
 object ApiJsonFormats {
-
-  /**
-   * Converts `org.joda.time.DateTime` object to JSON and vice versa.
-   */
-  implicit object DateTimeFormat extends Format[DateTime] {
-    def reads(json: JsValue): JsResult[DateTime] = json.asOpt[String] map { str =>
-      Try(new DateTime(str, DateTimeZone.UTC)) match {
-        case Success(date) => JsSuccess(date)
-        case Failure(e) => JsError("format")
-      }
-    } getOrElse JsError("string")
-
-    def writes(o: DateTime): JsValue = JsString(o.toString)
-  }
 
   /**
    * Converts an enum value to Json and vice versa.
@@ -62,7 +45,7 @@ object ApiJsonFormats {
       json.asOpt[String].map { value =>
         enum.values.find(_.toString == value) match {
           case Some(v) => JsSuccess(v)
-          case _ => JsError("invalid")
+          case _       => JsError("invalid")
         }
       } getOrElse JsError("string")
     }
@@ -131,16 +114,17 @@ object ApiParams {
    */
   implicit class AnyMapNormalizers(val m: Map[String, Any]) {
     def normalize: Seq[(String, Any)] = m.mapValues(_.normalize).toSeq.flatMap {
-      case (name, EmptyValue(_)) => Seq()
+      case (_, EmptyValue(_)) => Seq()
       case (name, ArrayValues(values, format)) if format == CollectionFormats.MULTI =>
         val containsFile = (value: Any) => value match {
           case _: ApiFile => true
-          case _ => false
+          case _          => false
         }
 
-        values.exists(containsFile) match {
-          case false => values.map { v => name -> v }
-          case true => values.zipWithIndex.map { case (v, i) => name + i.toString -> v }
+        if (values.exists(containsFile)) {
+          values.zipWithIndex.map { case (v, i) => name + i.toString -> v }
+        } else {
+          values.map { v => name -> v }
         }
       case (k, v) => Seq(k -> v)
     }
@@ -152,7 +136,7 @@ object ApiParams {
   implicit class AnyParametersNormalizer(value: Any) {
     import CollectionFormats._
 
-    def normalize = {
+    def normalize: Any = {
       def n(value: Any): Any = value match {
         case Some(opt) => n(opt)
         case arr @ ArrayValues(values, CollectionFormats.MULTI) => arr.copy(values.map(n))
@@ -165,6 +149,19 @@ object ApiParams {
       n(value)
     }
   }
+}
+
+/**
+ * A Play request.
+ */
+trait PlayRequest {
+
+  /**
+   * Executes the request.
+   *
+   * @return A response.
+   */
+  def execute(): Future[WSResponse]
 }
 
 /**
@@ -185,10 +182,9 @@ object PlayRequest {
      *
      * @param config   The global API config.
      * @param wsClient The Play WS client.
-     * @param ec       The execution context.
      * @return A Play request.
      */
-    def toPlay(config: ApiConfig, wsClient: WSClient)(implicit ec: ExecutionContext) = new {
+    def toPlay(config: ApiConfig, wsClient: WSClient): PlayRequest = new PlayRequest {
 
       /**
        * A request pipeline.
@@ -272,26 +268,24 @@ object PlayRequest {
       private def bodyPipeline: Pipeline = {
         case wsRequest =>
           apiRequest.bodyParam.normalize match {
-            case file: ApiFile => wsRequest.withBody(StreamedBody(StreamConverters.fromInputStream(() => file.content)))
+            case file: ApiFile         => wsRequest.withBody(StreamConverters.fromInputStream(() => file.content))
             case NumericValue(numeric) => wsRequest.withBody(numeric.value)
-            case string: String => wsRequest.withBody(String.valueOf(string))
-            case json: JsValue => wsRequest.withBody(json)
+            case string: String        => wsRequest.withBody(String.valueOf(string))
+            case json: JsValue         => wsRequest.withBody(json)
             case _ =>
               val contentType = apiRequest.contentType.flatMap(MediaType.parse.apply).map(mt => mt.mediaType + "/" + mt.mediaSubType)
               apiRequest.formParams.normalize match {
                 case p if p.isEmpty => wsRequest
                 case p if contentType.contains("multipart/form-data") =>
-                  val boundary = Multipart.randomBoundary()
-                  val contentType = s"multipart/form-data; boundary=$boundary"
                   val body = p.foldLeft(List[Part[Source[ByteString, Any]]]()) {
                     case (parts, (key, value)) =>
                       value match {
                         case f: ApiFile => parts :+ FilePart(key, f.name, None, StreamConverters.fromInputStream(() => f.content))
-                        case _ => parts :+ DataPart(key, String.valueOf(value))
+                        case _          => parts :+ DataPart(key, String.valueOf(value))
                       }
                   }
 
-                  wsRequest.withBody(StreamedBody(Multipart.transform(Source(body), boundary))).withHeaders("Content-Type" -> contentType)
+                  wsRequest.withBody(Source(body))(WSBodyWritables.bodyWritableOf_Multipart)
                 case p => // default: application/x-www-form-urlencoded
                   wsRequest.withBody(p.toMap.mapValues(v => Seq(String.valueOf(v))))
               }
@@ -307,7 +301,7 @@ object PlayRequest {
             case (req, BasicCredentials(username, password)) =>
               req.withAuth(username, password, WSAuthScheme.BASIC)
             case (req, ApiKeyCredentials(keyValue, keyName, ApiKeyLocations.HEADER)) =>
-              req.withHeaders(keyName -> keyValue.value)
+              req.addHttpHeaders(keyName -> keyValue.value)
             case (req, _) => req
           }
       }
@@ -317,7 +311,10 @@ object PlayRequest {
        */
       private def headerPipeline: Pipeline = {
         case wsRequest =>
-          wsRequest.withHeaders(apiRequest.headerParams.normalize.map { case (k, v) => k -> String.valueOf(v) }: _*)
+          wsRequest.addHttpHeaders(apiRequest.headerParams.normalize.map {
+            case (k, v) =>
+              k -> String.valueOf(v)
+          }: _*)
       }
 
       /**
@@ -331,7 +328,7 @@ object PlayRequest {
             case (params, _) => params
           }.normalize.map { case (k, v) => k -> String.valueOf(v) }
 
-          wsRequest.withQueryString(queryParams.toList: _*)
+          wsRequest.addQueryStringParameters(queryParams.toList: _*)
       }
     }
   }

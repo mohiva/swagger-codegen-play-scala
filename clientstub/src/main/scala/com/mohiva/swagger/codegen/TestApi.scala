@@ -162,8 +162,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithEmptyBody(rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Unit](204)
     )
@@ -174,8 +174,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithJsonObjectBody(body: User, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[User]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[User]] = {
     apiInvoker.execute[User](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withJsonBody[User](body)
       .withJsonSuccessResponse[User](200)
@@ -187,8 +187,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithJsonArrayBody(body: Seq[User], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Seq[User]]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Seq[User]]] = {
     apiInvoker.execute[Seq[User]](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withJsonBody[Seq[User]](body)
       .withJsonSuccessResponse[Seq[User]](200)
@@ -200,8 +200,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithSomeJsonBody(body: Option[User], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[User]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[User]] = {
     apiInvoker.execute[User](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withJsonBody[User](body)
       .withJsonSuccessResponse[User](200)
@@ -213,8 +213,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithNoneJsonBody(body: Option[User], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withJsonBody[User](body)
       .withPrimitiveSuccessResponse[Unit](204)
@@ -226,8 +226,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithFileBody(body: ApiFile, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[ApiFile]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[ApiFile]] = {
     apiInvoker.execute[ApiFile](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
       .withPrimitiveSuccessResponse[ApiFile](200)
@@ -239,8 +239,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithIntBody(body: Int, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
       .withPrimitiveSuccessResponse[String](200)
@@ -252,8 +252,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithStringBody(body: String, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
       .withPrimitiveSuccessResponse[String](200)
@@ -265,8 +265,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithBooleanBody(body: Boolean, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
       .withPrimitiveSuccessResponse[String](200)
@@ -278,8 +278,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithSomePrimitiveBody(body: Option[String], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
       .withPrimitiveSuccessResponse[String](200)
@@ -291,8 +291,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithNonePrimitiveBody(body: Option[String], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
       .withPrimitiveSuccessResponse[Unit](204)
@@ -312,7 +312,6 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
     implicit
     ec: ExecutionContext
   ): Future[ApiResponse[String]] = {
-
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", Some("multipart/form-data; charset=utf-8"), rc)
       .withFormParam("file", file)
       .withFormParam("files", ApiParams.ArrayValues(files, ApiParams.CollectionFormats.MULTI))
@@ -327,8 +326,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithFormURLEncodedData(param1: String, param2: Int, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", Some("application/x-www-form-urlencoded; charset=utf-8"), rc)
       .withFormParam("param1", param1)
       .withFormParam("param2", param2)
@@ -341,8 +340,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithIntHeader(header: Int, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
       .withPrimitiveSuccessResponse[String](200)
@@ -354,8 +353,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithStringHeader(header: String, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
       .withPrimitiveSuccessResponse[String](200)
@@ -367,8 +366,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithBooleanHeader(header: Boolean, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
       .withPrimitiveSuccessResponse[String](200)
@@ -380,8 +379,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithSomeStringHeader(header: Option[String] = None, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
       .withPrimitiveSuccessResponse[String](200)
@@ -393,8 +392,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithNoneStringHeader(header: Option[String] = None, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withHeaderParam("X-HEADER", header)
       .withPrimitiveSuccessResponse[Unit](204)
@@ -406,8 +405,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithQueryParameters(param1: String, param2: Int, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param1", param1)
       .withQueryParam("param2", param2)
@@ -420,8 +419,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithArrayCsvQueryParameters(param: Seq[String], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.CSV))
       .withPrimitiveSuccessResponse[String](200)
@@ -433,8 +432,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithArrayTsvQueryParameters(param: Seq[String], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.TSV))
       .withPrimitiveSuccessResponse[String](200)
@@ -446,8 +445,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithArraySsvQueryParameters(param: Seq[String], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.SSV))
       .withPrimitiveSuccessResponse[String](200)
@@ -459,8 +458,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithArrayPipesQueryParameters(param: Seq[String], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.PIPES))
       .withPrimitiveSuccessResponse[String](200)
@@ -472,8 +471,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithArrayMultiQueryParameters(param: Seq[String], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.MULTI))
       .withPrimitiveSuccessResponse[String](200)
@@ -485,8 +484,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithSomeArrayQueryParameters(param: Option[Seq[String]], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.CSV))
       .withPrimitiveSuccessResponse[String](200)
@@ -498,8 +497,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithNoneArrayQueryParameters(param: Option[Seq[String]], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", ArrayValues(param, CollectionFormats.CSV))
       .withPrimitiveSuccessResponse[Unit](204)
@@ -511,8 +510,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithSomeStringQueryParameter(param: Option[String], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", param)
       .withPrimitiveSuccessResponse[String](200)
@@ -524,8 +523,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithNoneStringQueryParameter(param: Option[String], rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withQueryParam("param", param)
       .withPrimitiveSuccessResponse[Unit](204)
@@ -537,8 +536,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithPathParameters(param1: String, param2: Int, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test/{param1}/{param2}", None, rc)
       .withPathParam("param1", param1)
       .withPathParam("param2", param2)
@@ -551,8 +550,9 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithBasicCredentials(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext, basicAuth: ApiRequest.BasicCredentials): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext,
+    basicAuth: ApiRequest.BasicCredentials
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withCredentials(basicAuth)
       .withPrimitiveSuccessResponse[String](200)
@@ -564,8 +564,9 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithAPICredentialsInHeader(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext, apiKey: ApiRequest.ApiKey): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext,
+    apiKey: ApiRequest.ApiKey
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withCredentials(ApiRequest.ApiKeyCredentials(apiKey, "X-AUTH", ApiRequest.ApiKeyLocations.HEADER))
       .withPrimitiveSuccessResponse[String](200)
@@ -577,8 +578,9 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithAPICredentialsInQueryString(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext, apiKey: ApiRequest.ApiKey): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext,
+    apiKey: ApiRequest.ApiKey
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withCredentials(ApiRequest.ApiKeyCredentials(apiKey, "auth", ApiRequest.ApiKeyLocations.QUERY))
       .withPrimitiveSuccessResponse[String](200)
@@ -590,8 +592,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithUnitAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Unit](204)
     )
@@ -602,8 +604,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testRequestWithDefaultPrimitiveType(body: String, rc: Config = Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.POST, "", "/test", None, rc)
       .withPrimitiveBody(body)
       .withDefaultPrimitiveSuccessResponse[String]
@@ -615,8 +617,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithJsonObjectAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[User]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[User]] = {
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonSuccessResponse[User](200)
     )
@@ -627,8 +629,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithJsonArrayAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Seq[User]]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Seq[User]]] = {
     apiInvoker.execute[Seq[User]](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonSuccessResponse[Seq[User]](200)
     )
@@ -639,8 +641,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseForUnexpectedJson(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[User]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[User]] = {
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonSuccessResponse[User](200)
     )
@@ -651,8 +653,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithDefaultJsonResponse(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[User]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[User]] = {
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withDefaultJsonSuccessResponse[User]
     )
@@ -663,8 +665,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithFileAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[ApiFile]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[ApiFile]] = {
     apiInvoker.execute[ApiFile](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[ApiFile](200)
     )
@@ -675,8 +677,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithStringAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[String](200)
     )
@@ -687,8 +689,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithLongAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Long]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Long]] = {
     apiInvoker.execute[Long](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Long](200)
     )
@@ -699,8 +701,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithIntAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Int]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Int]] = {
     apiInvoker.execute[Int](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Int](200)
     )
@@ -711,8 +713,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithDoubleAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Double]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Double]] = {
     apiInvoker.execute[Double](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Double](200)
     )
@@ -723,8 +725,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithFloatAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Float]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Float]] = {
     apiInvoker.execute[Float](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Float](200)
     )
@@ -735,8 +737,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithBooleanAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Boolean]] = {
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Boolean](200)
     )
@@ -747,8 +749,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseWithByteAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Byte]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Byte]] = {
     apiInvoker.execute[Byte](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Byte](200)
     )
@@ -759,8 +761,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiResponseForUnexpectedPrimitiveType(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Boolean]] = {
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Boolean](200)
     )
@@ -771,8 +773,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithUnitAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Unit](500)
     )
@@ -783,8 +785,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithJsonObjectAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[User]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[User]] = {
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonErrorResponse[Status](500)
     )
@@ -795,8 +797,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithJsonArrayAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Seq[User]]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Seq[User]]] = {
     apiInvoker.execute[Seq[User]](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonErrorResponse[Seq[Status]](500)
     )
@@ -807,8 +809,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorForUnexpectedJson(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[User]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[User]] = {
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withJsonErrorResponse[Status](500)
     )
@@ -819,8 +821,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithDefaultJsonResponse(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[User]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[User]] = {
     apiInvoker.execute[User](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withDefaultJsonErrorResponse[Status]
     )
@@ -831,8 +833,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithFileAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[ApiFile]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[ApiFile]] = {
     apiInvoker.execute[ApiFile](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[ApiFile](500)
     )
@@ -843,8 +845,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithStringAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[String]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[String]] = {
     apiInvoker.execute[String](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[String](500)
     )
@@ -855,8 +857,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithLongAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Long]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Long]] = {
     apiInvoker.execute[Long](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Long](500)
     )
@@ -867,8 +869,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithIntAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Int]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Int]] = {
     apiInvoker.execute[Int](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Int](500)
     )
@@ -879,8 +881,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithDoubleAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Double]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Double]] = {
     apiInvoker.execute[Double](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Double](500)
     )
@@ -891,8 +893,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithFloatAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Float]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Float]] = {
     apiInvoker.execute[Float](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Float](500)
     )
@@ -903,8 +905,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithBooleanAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Boolean]] = {
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Boolean](500)
     )
@@ -915,8 +917,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorWithByteAsValue(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Byte]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Byte]] = {
     apiInvoker.execute[Byte](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Byte](500)
     )
@@ -927,8 +929,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorForUnexpectedPrimitiveType(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Boolean]] = {
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveErrorResponse[Boolean](500)
     )
@@ -939,8 +941,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testApiErrorForDefaultPrimitiveType(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Boolean]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Boolean]] = {
     apiInvoker.execute[Boolean](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withDefaultPrimitiveErrorResponse[Boolean]
     )
@@ -951,8 +953,8 @@ class TestApi @Inject() (apiInvoker: ApiInvoker) {
    */
   def testResponseHeaders(rc: ApiRequest.Config = ApiRequest.Config())(
     implicit
-    ec: ExecutionContext): Future[ApiResponse[Unit]] = {
-
+    ec: ExecutionContext
+  ): Future[ApiResponse[Unit]] = {
     apiInvoker.execute[Unit](ApiRequest(RequestMethod.GET, "", "/test", None, rc)
       .withPrimitiveSuccessResponse[Unit](200)
     )
@@ -968,11 +970,11 @@ object TestApi {
    * Helper to extract headers for the `testResponseHeaders` method.
    */
   case class TestResponseHeaders(r: { def headers: Map[String, Seq[String]] }) {
-    def `x-String`(index: Int = 0) = ApiHeaderExtractor(r.headers).asString("X-STRING", index)
-    def `x-Int`(index: Int = 0) = ApiHeaderExtractor(r.headers).asInt("X-INT", index)
-    def `x-Long`(index: Int = 0) = ApiHeaderExtractor(r.headers).asLong("X-LONG", index)
-    def `x-Float`(index: Int = 0) = ApiHeaderExtractor(r.headers).asFloat("X-FLOAT", index)
-    def `x-Double`(index: Int = 0) = ApiHeaderExtractor(r.headers).asDouble("X-DOUBLE", index)
-    def `x-Boolean`(index: Int = 0) = ApiHeaderExtractor(r.headers).asBoolean("X-BOOLEAN", index)
+    def `x-String`(index: Int = 0): Option[String] = ApiHeaderExtractor(r.headers).asString("X-STRING", index)
+    def `x-Int`(index: Int = 0): Option[Int] = ApiHeaderExtractor(r.headers).asInt("X-INT", index)
+    def `x-Long`(index: Int = 0): Option[Long] = ApiHeaderExtractor(r.headers).asLong("X-LONG", index)
+    def `x-Float`(index: Int = 0): Option[Float] = ApiHeaderExtractor(r.headers).asFloat("X-FLOAT", index)
+    def `x-Double`(index: Int = 0): Option[Double] = ApiHeaderExtractor(r.headers).asDouble("X-DOUBLE", index)
+    def `x-Boolean`(index: Int = 0): Option[Boolean] = ApiHeaderExtractor(r.headers).asBoolean("X-BOOLEAN", index)
   }
 }

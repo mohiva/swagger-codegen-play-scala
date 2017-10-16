@@ -15,9 +15,7 @@
  */
 package com.mohiva.swagger.codegen.models
 
-import ai.x.play.json.Jsonx
-import com.mohiva.swagger.codegen.core.ApiJsonFormats._
-import org.joda.time.DateTime
+import java.time.{ LocalDate, OffsetDateTime }
 
 /**
  * A Json model to test.
@@ -29,25 +27,30 @@ case class User(
   roles: Seq[String],
   gender: User.Gender,
   activated: Boolean,
-  lastLogin: Option[DateTime],
-  insertDate: DateTime)
+  dateOfBirth: LocalDate,
+  lastLogin: Option[OffsetDateTime],
+  insertDate: OffsetDateTime
+)
 
 /**
  * The companion object.
  */
 object User {
-
-  /**
-   * Converts a [[User]] class into a JSON object.
-   */
-  implicit val jsonFormat = Jsonx.formatCaseClass[User]
+  import ai.x.play.json.Jsonx
+  import play.api.libs.json.OFormat
+  import com.mohiva.swagger.codegen.core.ApiJsonFormats.enumValueFormat
 
   /**
    * The `Gender` enum.
    */
   type Gender = Gender.Value
   object Gender extends Enumeration {
-    val Male = Value("Male")
-    val Female = Value("Female")
+    val Male: Value = Value("Male")
+    val Female: Value = Value("Female")
   }
+
+  /**
+   * Converts a [[User]] class into a JSON object.
+   */
+  implicit val jsonFormat: OFormat[User] = Jsonx.formatCaseClass[User]
 }
