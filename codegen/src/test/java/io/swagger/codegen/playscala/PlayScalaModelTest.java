@@ -244,8 +244,8 @@ public class PlayScalaModelTest {
         Assert.assertEquals(cm.classname, "Sample");
         Assert.assertEquals(cm.description, "a map model");
         Assert.assertEquals(cm.vars.size(), 0);
-        Assert.assertEquals(cm.parent, "Map[String, Children]");
-        Assert.assertEquals(cm.imports.size(), 1);
+        Assert.assertEquals(cm.parent, "HashMap[String, Children]");
+        Assert.assertEquals(cm.imports.size(), 2);
         Assert.assertEquals(Sets.intersection(cm.imports, Sets.newHashSet("Map", "Children")).size(), 1);
     }
 }

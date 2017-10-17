@@ -1,5 +1,6 @@
 package io.swagger.codegen.languages;
 
+import com.samskivert.mustache.Escapers;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import io.swagger.codegen.*;
@@ -240,9 +241,33 @@ public class PlayScalaClientCodegen extends AbstractScalaCodegen implements Code
         return "Generates a Scala client library based on PlayWS.";
     }
 
+    /**
+     * Overrides the default Mustache escaper with a custom one that allows to escape variables with grave accents.
+     */
+    @Override
+    public Mustache.Compiler processCompiler(Mustache.Compiler compiler) {
+        Mustache.Escaper SCALA = text -> {
+            // The given text is a reserved word which is escaped by enclosing it with grave accents. If we would
+            // escape that with the default Mustache `HTML` escaper, then the escaper would also escape our grave
+            // accents. So we remove the grave accents before the escaping and add it back after the escaping.
+            if (text.startsWith("`") && text.endsWith("`")) {
+                String unescaped =  text.substring(1, text.length() - 1);
+                return "`" + Escapers.HTML.escape(unescaped) + "`";
+            }
+
+            // All none reserved words will be escaped with the default Mustache `HTML` escaper
+            return Escapers.HTML.escape(text);
+        };
+
+        return compiler.withEscaper(SCALA);
+    }
+
+    /**
+     * We escape all scala reserved words by enclosing the word with grave accents.
+     */
     @Override
     public String escapeReservedWord(String name) {
-        return "_" + name;
+        return "`" + name + "`";
     }
 
     @Override
