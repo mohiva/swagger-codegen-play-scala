@@ -549,6 +549,10 @@ definitions:
       color:
         type: string
         enum: [black, white, brown]
+        description: Test for enum values
+      type:
+        type: string
+        description: Test for reserved values
   Tag:
     type: object
     properties:

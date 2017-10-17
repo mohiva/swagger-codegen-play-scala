@@ -1,12 +1,12 @@
 package io.swagger.codegen.languages;
 
-import com.google.common.base.CaseFormat;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import io.swagger.codegen.*;
 import io.swagger.models.Response;
 import io.swagger.models.auth.SecuritySchemeDefinition;
-import io.swagger.models.properties.*;
+import io.swagger.models.properties.FileProperty;
+import io.swagger.models.properties.Property;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -21,7 +21,7 @@ import java.util.*;
  * This client is based on the `AkkaScalaClientCodegen`. For more information please visit:
  * https://github.com/mohiva/swagger-codegen-play-scala
  */
-public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenConfig {
+public class PlayScalaClientCodegen extends AbstractScalaCodegen implements CodegenConfig {
     private String mainPackage = "io.swagger.client";
     private String invokerPackage = mainPackage + ".core";
     private String sourceFolder = "src/main/scala";
@@ -91,13 +91,18 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         apiPackage = mainPackage + ".api";
         modelPackage = mainPackage + ".model";
 
-        reservedWords = new HashSet<>(
-            Arrays.asList(
-                "abstract", "case", "catch", "class", "def", "do", "else", "extends",
-                "false", "final", "finally", "for", "forSome", "if", "implicit",
-                "import", "lazy", "match", "new", "null", "object", "override", "package",
-                "private", "protected", "return", "sealed", "super", "this", "throw",
-                "trait", "try", "true", "type", "val", "var", "while", "with", "yield")
+        setReservedWordsLowerCase(
+                Arrays.asList(
+                        // local variable names used in API methods (endpoints)
+                        "path", "contentTypes", "contentType", "queryParams", "headerParams",
+                        "formParams", "postBody", "mp", "basePath", "apiInvoker",
+
+                        // scala reserved words
+                        "abstract", "case", "catch", "class", "def", "do", "else", "extends",
+                        "false", "final", "finally", "for", "forSome", "if", "implicit",
+                        "import", "lazy", "match", "new", "null", "object", "override", "package",
+                        "private", "protected", "return", "sealed", "super", "this", "throw",
+                        "trait", "try", "true", "type", "val", "var", "while", "with", "yield")
         );
 
         if (renderJavadoc) {
@@ -139,25 +144,9 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         typeMapping.put("DateTime", "OffsetDateTime");
         typeMapping.put("date", "LocalDate");
 
-        languageSpecificPrimitives = new HashSet<>(
-            Arrays.asList(
-                "String",
-                "boolean",
-                "Boolean",
-                "Double",
-                "Int",
-                "Long",
-                "Float",
-                "Object",
-                "List",
-                "Seq",
-                "Map")
-        );
         instantiationTypes.put("array", "ListBuffer");
-        instantiationTypes.put("map", "Map");
+        instantiationTypes.put("map", "HashMap");
 
-        cliOptions.add(new CliOption(CodegenConstants.MODEL_PACKAGE, CodegenConstants.MODEL_PACKAGE_DESC));
-        cliOptions.add(new CliOption(CodegenConstants.API_PACKAGE, CodegenConstants.API_PACKAGE_DESC));
         cliOptions.add(new CliOption(CodegenConstants.INVOKER_PACKAGE, CodegenConstants.INVOKER_PACKAGE_DESC));
         cliOptions.add(new CliOption(CustomCodegenConstants.CONFIG_PATH, CustomCodegenConstants.CONFIG_PATH_DESC));
         cliOptions.add(new CliOption(CustomCodegenConstants.PROJECT_ORGANIZATION, CustomCodegenConstants.PROJECT_ORGANIZATION_DESC));
@@ -219,66 +208,6 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
     }
 
     /**
-     * A codegen property that is a container type has an inner type that can either be a container itself or a
-     * non-container type. This method returns the non-container type of a codegen property by traversing recursively
-     * the `items` of a `CodegenProperty`.
-     *
-     * @param property The codegen property to traverse recursively.
-     * @return The non-container item.
-     */
-    private CodegenProperty getNonContainerItem(CodegenProperty property) {
-        if (property.isContainer) {
-            return getNonContainerItem(property.items);
-        }
-
-        return property;
-    }
-
-    /**
-     * In Scala we must not import Models which are located in the same package. If we do that, we get an warning
-     * like this:
-     *
-     * ```
-     * imported `Tag' is permanently hidden by definition of object Tag in package models
-     * ```
-     *
-     * So we remove all model imports from model files to avoid this warning.
-     */
-    @Override
-    public Map<String, Object> postProcessModels(Map<String, Object> objectMap) {
-        Map<String, Object> processed = super.postProcessModels(objectMap);
-
-        // Get the model imports
-        List<String> modelImports = new ArrayList<>();
-        List<Map<String, Object>> models = (List<Map<String, Object>>) processed.get("models");
-        for (Map<String, Object> model : models) {
-            Object value = model.get("model");
-            if (value instanceof CodegenModel) {
-                CodegenModel codegenModel = (CodegenModel) value;
-                for (CodegenProperty property : codegenModel.allVars) {
-                    CodegenProperty item = getNonContainerItem(property);
-                    if (item != null && !item.isPrimitiveType && !importMapping.containsKey(item.datatype)) {
-                        if (!modelImports.contains(item.datatype)) {
-                            modelImports.add(toModelImport(item.datatype));
-                        }
-                    }
-                }
-            }
-        }
-
-        // Remove the model imports
-        Iterator<Map<String, String>> imports = ((List<Map<String, String>>) processed.get("imports")).iterator();
-        while (imports.hasNext()) {
-            String value = imports.next().get("import");
-            if (modelImports.contains(value)) {
-                imports.remove();
-            }
-        }
-
-        return processed;
-    }
-
-    /**
      * Convert Swagger Response object to Codegen Response object
      *
      * @param responseCode HTTP response code
@@ -308,38 +237,57 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
 
     @Override
     public String getHelp() {
-        return "Generates a Scala client library base on PlayWS.";
+        return "Generates a Scala client library based on PlayWS.";
     }
 
     @Override
     public String escapeReservedWord(String name) {
-        return "`" + name + "`";
+        return "_" + name;
     }
 
     @Override
-    public String apiFileFolder() {
-        return outputFolder + "/" + sourceFolder + "/" + apiPackage().replace('.', File.separatorChar);
+    public String escapeQuotationMark(String input) {
+        // remove " to avoid code injection
+        return input.replace("\"", "");
     }
 
     @Override
-    public String modelFileFolder() {
-        return outputFolder + "/" + sourceFolder + "/" + modelPackage().replace('.', File.separatorChar);
-    }
-
-    @Override
-    public String getTypeDeclaration(Property p) {
-        if (p instanceof ArrayProperty) {
-            ArrayProperty ap = (ArrayProperty) p;
-            Property inner = ap.getItems();
-            return getSwaggerType(p) + "[" + getTypeDeclaration(inner) + "]";
-        } else if (p instanceof MapProperty) {
-            MapProperty mp = (MapProperty) p;
-            Property inner = mp.getAdditionalProperties();
-
-            return getSwaggerType(p) + "[String, " + getTypeDeclaration(inner) + "]";
+    public String toOperationId(String operationId) {
+        // throw exception if method name is empty
+        if (StringUtils.isEmpty(operationId)) {
+            throw new RuntimeException("Empty method name (operationId) not allowed");
         }
 
-        return super.getTypeDeclaration(p);
+        // method name cannot use reserved keyword, e.g. return
+        if (isReservedWord(operationId)) {
+            throw new RuntimeException(operationId + " (reserved word) cannot be used as method name");
+        }
+
+        return formatIdentifier(operationId, false);
+    }
+
+    @Override
+    public String toParamName(String name) {
+        return formatIdentifier(name, false);
+    }
+
+    @Override
+    public String toVarName(String name) {
+        return formatIdentifier(name, false);
+    }
+
+    @Override
+    public String toEnumName(CodegenProperty property) {
+        return formatIdentifier(property.baseName, true);
+    }
+
+    @Override
+    public String toDefaultValue(Property p) {
+        if (!p.getRequired()) {
+            return "None";
+        }
+
+        return super.toDefaultValue(p);
     }
 
     @Override
@@ -370,112 +318,12 @@ public class PlayScalaClientCodegen extends DefaultCodegen implements CodegenCon
         return codegenSecurities;
     }
 
-    @Override
-    public String toOperationId(String operationId) {
-        // throw exception if method name is empty
-        if (StringUtils.isEmpty(operationId)) {
-            throw new RuntimeException("Empty method name (operationId) not allowed");
-        }
-
-        return super.toOperationId(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, operationId));
-    }
-
-    @Override
-    public String toParamName(String name) {
-        return formatIdentifier(name, false);
-    }
-
-    @Override
-    public String toVarName(String name) {
-        return formatIdentifier(name, false);
-    }
-
-    @Override
-    public String toEnumName(CodegenProperty property) {
-        return formatIdentifier(property.baseName, true);
-    }
-
-    @Override
-    public String getSwaggerType(Property p) {
-        String swaggerType = super.getSwaggerType(p);
-        String type;
-        if (typeMapping.containsKey(swaggerType)) {
-            type = typeMapping.get(swaggerType);
-            if (languageSpecificPrimitives.contains(type)) {
-                return toModelName(type);
-            }
-        } else {
-            type = swaggerType;
-        }
-        return toModelName(type);
-    }
-
-    @Override
-    public String toInstantiationType(Property p) {
-        if (p instanceof MapProperty) {
-            MapProperty ap = (MapProperty) p;
-            String inner = getSwaggerType(ap.getAdditionalProperties());
-            return instantiationTypes.get("map") + "[String, " + inner + "]";
-        } else if (p instanceof ArrayProperty) {
-            ArrayProperty ap = (ArrayProperty) p;
-            String inner = getSwaggerType(ap.getItems());
-            return instantiationTypes.get("array") + "[" + inner + "]";
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public String toDefaultValue(Property p) {
-        if (!p.getRequired()) {
-            return "None";
-        }
-        if (p instanceof StringProperty) {
-            return "null";
-        } else if (p instanceof BooleanProperty) {
-            return "null";
-        } else if (p instanceof DateProperty) {
-            return "null";
-        } else if (p instanceof DateTimeProperty) {
-            return "null";
-        } else if (p instanceof DoubleProperty) {
-            return "null";
-        } else if (p instanceof FloatProperty) {
-            return "null";
-        } else if (p instanceof IntegerProperty) {
-            return "null";
-        } else if (p instanceof LongProperty) {
-            return "null";
-        } else if (p instanceof MapProperty) {
-            MapProperty ap = (MapProperty) p;
-            String inner = getSwaggerType(ap.getAdditionalProperties());
-            return "Map[String, " + inner + "].empty ";
-        } else if (p instanceof ArrayProperty) {
-            ArrayProperty ap = (ArrayProperty) p;
-            String inner = getSwaggerType(ap.getItems());
-            return "Seq[" + inner + "].empty ";
-        } else {
-            return "null";
-        }
-    }
-
-    @Override
-    public String escapeUnsafeCharacters(String input) {
-        return input.replace("*/", "*_/").replace("/*", "/_*");
-    }
-
-    @Override
-    public String escapeQuotationMark(String input) {
-        // remove " to avoid code injection
-        return input.replace("\"", "");
-    }
-
     private String formatIdentifier(String name, boolean capitalized) {
-        String identifier = camelize(name, true);
+        String identifier = camelize(sanitizeName(name), true);
         if (capitalized) {
             identifier = StringUtils.capitalize(identifier);
         }
-        if (identifier.matches("[a-zA-Z_$][\\w_$]+") && !reservedWords.contains(identifier)) {
+        if (identifier.matches("[a-zA-Z_$][\\w_$]+") && !isReservedWord(identifier)) {
             return identifier;
         }
         return escapeReservedWord(identifier);
