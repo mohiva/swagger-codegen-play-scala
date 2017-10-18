@@ -24,7 +24,8 @@ import scala.concurrent.duration._
 /**
  * The API configuration.
  *
- * @param url             The optional API URL. If this URL is defined then it has precedence over the URL defined in the Swagger spec.
- * @param requestTimeout  The request timeout. Defaults to 20 seconds.
+ * @param url            The optional API URL. If this URL is defined then it has precedence over the URL defined
+ *                       in the Swagger spec.
+ * @param requestTimeout The request timeout. Defaults to 20 seconds.
  */
 case class ApiConfig(url: Option[String] = None, requestTimeout: FiniteDuration = 20.seconds)

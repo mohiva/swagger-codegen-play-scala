@@ -52,3 +52,32 @@ playVersion         | The Play version to use in generated build.sbt
 
 [Swagger]: http://swagger.io/
 [Swagger Codegen]: https://github.com/swagger-api/swagger-codegen
+
+## How to use
+
+To use the client you must inject a corresponding API handler into your controller or service. Every API 
+handler itself has a dependency to the `ApiInvoker` which must be instantiated with the global configuration 
+and an instance of the `WSClient`. It's the best to wire this dependencies with your preferred DI method.
+
+Every method created for you API handler accepts, additional to the parameters created from the Swagger spec, 
+an optional request config which can be used to override the global config.
+
+### Global config
+
+Property            | Description
+--------------------|-------------------------------------------------------------
+url                 | The optional API URL. If this URL is defined then it has precedence over the URL defined in the Swagger spec.
+requestTimeout      | The request timeout. Defaults to 20 seconds.
+
+### Request config
+
+Property            | Description
+--------------------|-------------------------------------------------------------
+url                 | The optional API URL. If this URL is defined then it has precedence over the URL defined in the Swagger spec and the global config.
+timeout             | The request timeout. Defaults to None, which means the global config has precedence.
+
+### WS Client config
+
+The underlying `WSClient` can also be configured in your [Play configuration].
+
+[Play configuration]: https://www.playframework.com/documentation/2.6.x/ScalaWS#Configuring-WSClient

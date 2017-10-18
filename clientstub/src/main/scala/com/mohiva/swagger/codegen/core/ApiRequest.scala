@@ -210,14 +210,11 @@ object ApiRequest {
    *
    * Use this to override the global config.
    *
-   * @param url      The optional API URL. If this URL is defined then it has precedence over the URL defined in the Swagger spec.
-   * @param maxTries The max number of tries to execute a HTTP request so that it responds with status code 200.
-   * @param timeout  The request timeout. Defaults to 20 seconds.
+   * @param url     The optional API URL. If this URL is defined then it has precedence over the URL defined in the
+   *                Swagger spec and the global config.
+   * @param timeout The request timeout. Defaults to None, which means the global config has precedence.
    */
-  case class Config(
-    url: Option[String] = None,
-    maxTries: Option[Int] = None,
-    timeout: Option[FiniteDuration] = None)
+  case class Config(url: Option[String] = None, timeout: Option[FiniteDuration] = None)
 
   /**
    * The response state.

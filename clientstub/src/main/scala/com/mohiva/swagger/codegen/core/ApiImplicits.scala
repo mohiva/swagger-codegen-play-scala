@@ -257,7 +257,7 @@ object PlayRequest {
        */
       private def requestTimeoutPipeline: Pipeline = {
         case wsRequest =>
-          wsRequest.withRequestTimeout(config.requestTimeout)
+          wsRequest.withRequestTimeout(apiRequest.config.timeout.getOrElse(config.requestTimeout))
       }
 
       /**
