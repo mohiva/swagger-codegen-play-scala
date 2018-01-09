@@ -343,17 +343,6 @@ public class PlayScalaClientCodegen extends AbstractScalaCodegen implements Code
         return codegenSecurities;
     }
 
-    private String formatIdentifier(String name, boolean capitalized) {
-        String identifier = camelize(sanitizeName(name), true);
-        if (capitalized) {
-            identifier = StringUtils.capitalize(identifier);
-        }
-        if (identifier.matches("[a-zA-Z_$][\\w_$]+") && !isReservedWord(identifier)) {
-            return identifier;
-        }
-        return escapeReservedWord(identifier);
-    }
-
     private static abstract class CustomLambda implements Mustache.Lambda {
         @Override
         public void execute(Template.Fragment frag, Writer out) throws IOException {

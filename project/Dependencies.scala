@@ -18,7 +18,7 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val crossScala = Seq("2.12.3", "2.11.11")
+    val crossScala = Seq("2.12.4", "2.11.12")
     val scalaVersion = crossScala.head
   }
 
@@ -30,9 +30,9 @@ object Dependencies {
   object Library {
 
     object Play {
-      val version = "2.6.6"
+      val version = "2.6.10"
       val ws = "com.typesafe.play" %% "play-ahc-ws" % version
-      val json = "com.typesafe.play" %% "play-json" % version
+      val json = "com.typesafe.play" %% "play-json" % "2.6.8"
       val test = "com.typesafe.play" %% "play-test" % version
       val specs2 = "com.typesafe.play" %% "play-specs2" % version
       object Specs2 {
@@ -44,7 +44,7 @@ object Dependencies {
 
     val playJsonExtension = "ai.x" %% "play-json-extensions" % "0.10.0"
     val playWSMock = "de.leanovate.play-mockws" %% "play-mockws" % "2.6.2"
-    val swaggerCodegen = "io.swagger" % "swagger-codegen" % "2.2.3"
+    val swaggerCodegen = "io.swagger" % "swagger-codegen" % "2.3.0"
     val javaxInject = "javax.inject" % "javax.inject" % "1"
     val testNG = "org.testng" % "testng" % "6.8"
   }
