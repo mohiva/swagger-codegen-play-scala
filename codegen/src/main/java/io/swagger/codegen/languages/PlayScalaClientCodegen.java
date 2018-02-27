@@ -35,7 +35,6 @@ public class PlayScalaClientCodegen extends AbstractScalaCodegen implements Code
     private String projectName = "swagger-client";
     private String projectVersion = "1.0.0";
     private String scalaVersion = "2.12.3";
-    private String playVersion = "2.6.6";
 
     /**
      * Typesafe config based values.
@@ -74,9 +73,6 @@ public class PlayScalaClientCodegen extends AbstractScalaCodegen implements Code
 
         static final String SCALA_VERSION = "scalaVersion";
         static final String SCALA_VERSION_DESC = "the Scala version to use in generated build.sbt";
-
-        static final String PLAY_VERSION = "playVersion";
-        static final String PLAY_VERSION_DESC = "the Play version to use in generated build.sbt";
     }
 
     /**
@@ -154,7 +150,6 @@ public class PlayScalaClientCodegen extends AbstractScalaCodegen implements Code
         cliOptions.add(new CliOption(CustomCodegenConstants.PROJECT_NAME, CustomCodegenConstants.PROJECT_NAME_DESC));
         cliOptions.add(new CliOption(CustomCodegenConstants.PROJECT_VERSION, CustomCodegenConstants.PROJECT_VERSION_DESC));
         cliOptions.add(new CliOption(CustomCodegenConstants.SCALA_VERSION, CustomCodegenConstants.SCALA_VERSION_DESC));
-        cliOptions.add(new CliOption(CustomCodegenConstants.PLAY_VERSION, CustomCodegenConstants.PLAY_VERSION_DESC));
     }
 
     @Override
@@ -185,17 +180,12 @@ public class PlayScalaClientCodegen extends AbstractScalaCodegen implements Code
             scalaVersion = (String) additionalProperties.get(CustomCodegenConstants.SCALA_VERSION);
         }
 
-        if (additionalProperties.containsKey(CustomCodegenConstants.PLAY_VERSION)) {
-            playVersion = (String) additionalProperties.get(CustomCodegenConstants.PLAY_VERSION);
-        }
-
         additionalProperties.put(CodegenConstants.INVOKER_PACKAGE, invokerPackage);
         additionalProperties.put(CustomCodegenConstants.CONFIG_PATH, configPath);
         additionalProperties.put(CustomCodegenConstants.PROJECT_ORGANIZATION, projectOrganization);
         additionalProperties.put(CustomCodegenConstants.PROJECT_NAME, projectName);
         additionalProperties.put(CustomCodegenConstants.PROJECT_VERSION, projectVersion);
         additionalProperties.put(CustomCodegenConstants.SCALA_VERSION, scalaVersion);
-        additionalProperties.put(CustomCodegenConstants.PLAY_VERSION, playVersion);
 
         final String invokerFolder = (sourceFolder + File.separator + invokerPackage).replace(".", File.separator);
         supportingFiles.add(new SupportingFile("apiFile.mustache", invokerFolder, "ApiFile.scala"));

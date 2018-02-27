@@ -48,7 +48,6 @@ projectOrganization | Project organization in generated build.sbt
 projectName         | Project name in generated build.sbt
 projectVersion      | Project version in generated build.sbt
 scalaVersion        | The Scala version to use in generated build.sbt
-playVersion         | The Play version to use in generated build.sbt
 
 [Swagger]: http://swagger.io/
 [Swagger Codegen]: https://github.com/swagger-api/swagger-codegen
